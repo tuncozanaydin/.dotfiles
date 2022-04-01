@@ -191,8 +191,6 @@
   (evil-terminal-cursor-changer-activate))
   #+end_src
 
-
-
 * Org
   #+begin_src emacs-lisp
 (use-package org
@@ -218,7 +216,13 @@
  
   #+end_src
 
-
+* Docker
+  #+begin_src emacs-lisp
+(use-package dockerfile-mode
+:hook 'prog-mode-hook
+:config
+(put 'docker-image-name 'safe-local-variable #'stringp))
+  #+end_src
  
 * LSP
   #+begin_src emacs-lisp
