@@ -1,0 +1,292 @@
+* Straight
+  #+begin_src emacs-lisp
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+	(url-retrieve-synchronously
+	 "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+	 'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+(straight-use-package 'use-package)
+(setq straight-use-package-by-default t)
+(setq use-package-verbose t)
+  #+end_src
+
+* Garbage Collection
+  #+begin_src emacs-lisp
+(use-package gcmh
+  :config
+  (gcmh-mode 1))
+  #+end_src
+ 
+* No littering
+  #+begin_src emacs-lisp
+(use-package no-littering)
+  #+end_src
+
+* Evil
+  #+begin_src emacs-lisp
+(use-package evil
+  :init
+  (evil-mode 1))
+
+(use-package evil-commentary
+  :after evil
+  :config
+  (evil-commentary-mode))
+
+  #+end_src
+
+* General
+  #+begin_src emacs-lisp
+(use-package general
+  :config
+  (general-swap-key nil '(motion normal visual) "n" "j")
+  (general-swap-key nil '(motion normal visual) "e" "k")
+  (general-swap-key nil '(motion normal visual) "i" "l")
+  (general-swap-key nil '(motion normal visual) "N" "J")
+  (general-swap-key nil '(motion normal visual) "E" "K")
+  (general-swap-key nil '(motion normal visual) "I" "L")
+
+  (setq toa/org-agenda-mode-map (make-sparse-keymap))
+  (general-define-key :keymaps 'toa/org-agenda-mode-map
+		      "q" 'org-agenda-quit
+		      "w" 'org-agenda-refile
+		      "k" 'org-agenda-kill
+		      "u" 'org-agenda-undo
+		      "r" 'org-agenda-redo
+		      "g" 'org-agenda-goto
+		      "s" 'org-agenda-schedule
+		      "d" 'org-agenda-deadline
+		      "c" '((lambda () (interactive) (org-capture nil "c")) :which-key "capture")
+		      "t" '(:ignore t :which-key "todo")
+		      "t t" '((lambda () (interactive) (org-agenda-todo "TODO")) :which-key "todo")
+		      "t d" '((lambda () (interactive) (org-agenda-todo "DONE")) :which-key "done")
+		      "t w" '((lambda () (interactive) (org-agenda-todo "WAIT")) :which-key "wait")
+		      "v" '(:ignore t :which-key "view")
+		      "v d" '(org-agenda-day-view :which-key "day-view")
+		      "v w" '(org-agenda-week-view :which-key "week-view")
+		      "v m" '(org-agenda-month-view :which-key "month-view")
+		      "n" 'org-agenda-next-line
+		      "e" 'org-agenda-previous-line
+		      "h" 'org-agenda-earlier
+		      "i" 'org-agenda-later)
+
+  (with-eval-after-load 'org-agenda
+    (setq org-agenda-mode-map toa/org-agenda-mode-map ))
+
+  (general-create-definer my-leader-def :prefix "SPC")
+  (general-create-definer my-local-leader-def :prefix "SPC m")
+  (my-leader-def
+    :keymaps 'normal
+    "a" '(:ignore t :which-key "agenda")
+    "a a" '((lambda () (interactive) (progn (org-agenda nil "a") (org-gcal-fetch))) :which-key "agenda")
+    "a t" '((lambda () (interactive) (org-agenda nil "t")) :which-key "todo")
+    "a c" '((lambda () (interactive) (org-capture nil "c")) :which-key "capture")
+    "f" '(:ignore t :which-key "file")
+    "f f" '(find-file :which-key "Find file")
+    "f s" 'save-buffer
+    "f r" '(counsel-recentf :which-key "Recent files")
+    "b" '(:ignore t :which-key "buffer")
+    "b k" 'kill-current-buffer
+    "b b" 'ivy-switch-buffer
+    "q q" 'save-buffers-kill-terminal
+    "w" '(:ignore t :which-key "window")
+    "w w" '(evil-window-next :which-key "next window")
+    "w c" '(evil-window-delete :which-key "close window")
+    "w s" '(evil-window-split :which-key "split horizontally")
+    "w v" '(evil-window-vsplit :which-key "split vertically")
+    "w o" '(delete-other-windows :which-key "close others")
+    "h" '(:ignore t :which-key "help")
+    "h k" '(describe-key :which-key "describe key")
+    "h v" '(counsel-describe-variable :which-key "describe variable")
+    "h f" '(counsel-describe-function :which-key "describe function")))
+  #+end_src
+
+* Counsel
+  #+begin_src emacs-lisp
+(use-package counsel
+  :config
+  (counsel-mode)
+  (ivy-mode))
+  #+end_src
+
+* GUI
+  #+begin_src emacs-lisp
+    (setq scroll-conservatively 101
+	  scroll-margin 0
+	  scroll-preserve-screen-position 1)
+    (if (display-graphic-p)
+	(progn
+	  (menu-bar-mode -1)
+	  (tool-bar-mode -1)
+	  (tooltip-mode -1)
+	  (scroll-bar-mode -1)
+	  (column-number-mode)
+	  (size-indication-mode)
+	  (set-fringe-mode 10)))
+
+    (global-display-line-numbers-mode t)
+    (setq display-line-numbers-width-start t)
+    (dolist (mode '(org-mode-hook
+		    treemacs-mode-hook
+		    eshell-mode-hook))
+      (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
+    (set-face-attribute 'default nil :font "Dank Mono" :height 140)
+    (set-face-attribute 'fixed-pitch nil :font "Dank Mono" :height 140)
+    (set-face-attribute 'variable-pitch nil :family "Dank Mono" :height 140 :weight 'regular)
+
+    (use-package all-the-icons)
+
+    (use-package treemacs-all-the-icons
+      :requires all-the-icons)
+
+    (use-package all-the-icons-dired
+      :requires all-the-icons)
+
+    (use-package doom-themes
+      :requires (all-the-icons treemacs)
+      :config
+      (setq doom-themes-enable-bold t
+	    doom-themes-enable-italic t)
+      (load-theme 'doom-moonlight t)
+      (setq doom-themes-treemacs-theme "doom-colors")
+      (doom-themes-treemacs-config)
+      (doom-themes-org-config))
+
+    (use-package doom-modeline
+      :config
+      (doom-modeline-mode))
+
+    (use-package dashboard
+      :config
+      (dashboard-setup-startup-hook)
+      (setq dashboard-startup-banner "~/.emacs.d/blackhole-lines.svg")
+      (setq dashboard-banner-logo-title "E  M  A  C  S ")
+      (setq dashboard-image-banner-max-height 300)
+      (setq dashboard-items nil)
+      (setq dashboard-footer-messages nil)
+      (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))))
+  #+end_src
+
+* Which Key
+  #+begin_src emacs-lisp
+(use-package which-key
+  :config
+  (which-key-mode))
+  #+end_src
+
+* Terminal
+  #+begin_src emacs-lisp
+(use-package clipetty)
+(use-package evil-terminal-cursor-changer)
+(unless (display-graphic-p)
+  (require 'evil-terminal-cursor-changer)
+  (evil-terminal-cursor-changer-activate))
+  #+end_src
+
+
+
+* Org
+  #+begin_src emacs-lisp
+(use-package org
+  :straight nil
+  :config
+  (setq org-agenda-files '("~/org"))
+  (setq my-inbox-file (concat org-directory "/inbox.org"))
+  (setq my-todo-file (concat org-directory "/todo.org"))
+  (setq my-projects-file (concat org-directory "/projects.org"))
+  (setq my-someday-file (concat org-directory "/someday.org"))
+  (setq org-todo-keywords '((sequence "TODO(t)" "WAIT(w)" "|" "DONE(d)")))
+  (setq org-capture-templates
+	'(("c" "Capture" entry (file my-inbox-file) "* TODO %?\n")))
+  (setq org-refile-use-outline-path 'file)
+  (setq org-outline-path-complete-in-steps nil)
+  (setq org-refile-targets '((my-todo-file :todo . "")
+			     (my-todo-file :todo . "TODO")
+			     (my-todo-file :todo . "WAIT")
+			     (my-someday-file :todo . "")))
+  (variable-pitch-mode 1))
+(setq org-src-preserve-indentation t
+      org-src-window-setup 'current-window)
+ 
+  #+end_src
+
+
+ 
+* LSP
+  #+begin_src emacs-lisp
+(defun efs/lsp-mode-setup ()
+  (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+  (lsp-headerline-breadcrumb-mode))
+
+(use-package lsp-mode
+  :commands (lsp lsp-deferred)
+  :hook (lsp-mode . efs/lsp-mode-setup)
+  :init
+  (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+  :config
+  (lsp-enable-which-key-integration t))
+  
+(use-package lsp-ui
+  :hook (lsp-mode . lsp-ui-mode)
+  :custom
+  (lsp-ui-doc-position 'bottom))
+  
+(use-package lsp-treemacs
+  :after lsp)
+  
+(use-package lsp-ivy
+  :after lsp)
+  
+(use-package dap-mode
+  ;; Uncomment the config below if you want all UI panes to be hidden by default!
+  ;; :custom
+  ;; (lsp-enable-dap-auto-configure nil)
+  ;; :config
+  ;; (dap-ui-mode 1)
+  :commands dap-debug
+  :config
+  ;; Set up Node debugging
+  (require 'dap-node)
+  (dap-node-setup) ;; Automatically installs Node debug adapter if needed
+
+  ;; Bind `C-c l d` to `dap-hydra` for easy access
+  (general-define-key
+    :keymaps 'lsp-mode-map
+    :prefix lsp-keymap-prefix
+    "d" '(dap-hydra t :wk "debugger")))
+
+(use-package python-mode
+  :ensure t
+  :hook (python-mode . lsp-deferred)
+  :custom
+  ;; NOTE: Set these if Python 3 is called "python3" on your system!
+  (python-shell-interpreter "python3")
+  (dap-python-executable "python3")
+  (dap-python-debugger 'debugpy)
+  :config
+  (require 'dap-python))
+  
+(use-package company
+  :after lsp-mode
+  :hook (lsp-mode . company-mode)
+  :bind (:map company-active-map
+         ("<tab>" . company-complete-selection))
+        (:map lsp-mode-map
+         ("<tab>" . company-indent-or-complete-common))
+  :custom
+  (company-minimum-prefix-length 1)
+  (company-idle-delay 0.0))
+
+(use-package company-box
+  :hook (company-mode . company-box-mode))
+  
+  #+end_src
+

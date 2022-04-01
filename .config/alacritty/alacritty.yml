@@ -1,0 +1,16 @@
+env:
+  TERM: xterm-24bit
+
+font:
+  normal: 
+    family: "Dank Mono"
+  bold:
+    family: "Dank Mono"
+  italic:
+    family: "Dank Mono"
+  size: 14.0
+
+colors:
+  primary:
+    foreground: '0x11CC33'
+    background: '0x171717'
