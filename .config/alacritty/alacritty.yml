@@ -3,11 +3,14 @@ env:
 
 font:
   normal: 
-    family: "Dank Mono"
+    family: Dank Mono
+    style: Regular
   bold:
-    family: "Dank Mono"
+    family: Dank Mono
+    style: Bold
   italic:
-    family: "Dank Mono"
+    family: Dank Mono
+    style: Italic
   size: 14.0
 
 colors:
