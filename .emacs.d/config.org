@@ -44,6 +44,9 @@
 
 * General
   #+begin_src emacs-lisp
+;; Make ECS quit prompts
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
 (use-package general
   :config
   (general-swap-key nil '(motion normal visual) "n" "j")
@@ -121,9 +124,10 @@
     (setq scroll-conservatively 101
 	  scroll-margin 0
 	  scroll-preserve-screen-position 1)
+
+    (menu-bar-mode -1)
     (if (display-graphic-p)
 	(progn
-	  (menu-bar-mode -1)
 	  (tool-bar-mode -1)
 	  (tooltip-mode -1)
 	  (scroll-bar-mode -1)
@@ -138,7 +142,7 @@
 		    eshell-mode-hook))
       (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-    (set-face-attribute 'default nil :font "JetBrains Mono" :height 140)
+    (set-face-attribute 'default nil :font "JetBrains Mono Medium" :height 140)
     (set-face-attribute 'fixed-pitch nil :font "JetBrains Mono" :height 140)
     (set-face-attribute 'variable-pitch nil :family "JetBrains Mono" :height 140 :weight 'regular)
 

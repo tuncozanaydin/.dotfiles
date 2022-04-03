@@ -4,7 +4,7 @@ env:
 font:
   normal:
     family: JetBrains Mono
-    style: Regular
+    style: ExtraLight
 
   bold:
     family: JetBrains Mono
@@ -12,7 +12,7 @@ font:
 
   italic:
     family: JetBrains Mono
-    style: Light Italic
+    style: ExtraLight Italic
 
   size: 14.0
 
