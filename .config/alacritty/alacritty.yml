@@ -2,15 +2,18 @@ env:
   TERM: xterm-24bit
 
 font:
-  normal: 
-    family: Dank Mono
+  normal:
+    family: JetBrains Mono
     style: Regular
+
   bold:
-    family: Dank Mono
+    family: JetBrains Mono
     style: Bold
+
   italic:
-    family: Dank Mono
-    style: Italic
+    family: JetBrains Mono
+    style: Light Italic
+
   size: 14.0
 
 colors:
