@@ -276,12 +276,18 @@
   :hook (python-mode . lsp-deferred)
   :custom
   ;; NOTE: Set these if Python 3 is called "python3" on your system!
-  (python-shell-interpreter "python3")
-  (dap-python-executable "python3")
+  ;; (python-shell-interpreter "python3")
+  ;; (dap-python-executable "python3")
   (dap-python-debugger 'debugpy)
   :config
   (require 'dap-python))
   
+(add-hook 'python-mode-hook
+(lambda ()
+(setq indent-tabs-mode t)
+(setq tab-width 4)))
+
+
 (use-package company
   :after lsp-mode
   :hook (lsp-mode . company-mode)

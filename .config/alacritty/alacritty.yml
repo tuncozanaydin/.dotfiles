@@ -1,5 +1,5 @@
 env:
-  TERM: xterm-24bit
+  TERM: alacritty-direct
 
 font:
   normal:
@@ -15,6 +15,7 @@ font:
     style: ExtraLight Italic
 
   size: 14.0
+  use_thin_strokes: true
 
 colors:
   primary:
