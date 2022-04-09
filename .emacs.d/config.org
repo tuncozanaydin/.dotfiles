@@ -254,6 +254,7 @@
   #+begin_src emacs-lisp
 (defun efs/lsp-mode-setup ()
   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+  (setq lsp-headerline-breadcrumb-icons-enable nil)
   (lsp-headerline-breadcrumb-mode)
 (setq lsp-modeline-code-actions-enable nil)
 (setq lsp-modeline-diagnostics-enable t))
