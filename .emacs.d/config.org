@@ -140,8 +140,8 @@
 (use-package highlight-indent-guides
   :hook (prog-mode . highlight-indent-guides-mode)
   :config
-  (setq highlight-indent-guides-method 'character)
-  (setq highlight-indent-guides-character 46))
+  (setq highlight-indent-guides-method 'character))
+  ;; (setq highlight-indent-guides-character 46))
 
     (setq scroll-conservatively 101
 	  scroll-margin 0
@@ -257,6 +257,7 @@
   (setq lsp-headerline-breadcrumb-icons-enable nil)
   (lsp-headerline-breadcrumb-mode)
 (setq lsp-modeline-code-actions-enable nil)
+(flymake-mode)
 (setq lsp-modeline-diagnostics-enable t))
 
 (use-package lsp-mode
