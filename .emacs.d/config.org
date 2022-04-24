@@ -116,33 +116,33 @@
 * Vertico
   #+begin_src emacs-lisp
 (use-package vertico
-:ensure t
-:init
-(vertico-mode)
-:custom
-(vertico-cycle t))
+  :ensure t
+  :init
+  (vertico-mode)
+  :custom
+  (vertico-cycle t))
 
 
 (use-package orderless
-:init
-(setq completion-category-defaults nil)
-:custom
-(completion-styles '(orderless))
-(completion-category-overrides '((file (styles . (partial-completion))))))
+  :init
+  (setq completion-category-defaults nil)
+  :custom
+  (completion-styles '(orderless))
+  (completion-category-overrides '((file (styles . (partial-completion))))))
 
 (use-package savehist
-:init
-(savehist-mode))
+  :init
+  (savehist-mode))
 
 (use-package embark)
 
 (use-package marginalia
-:init
-(marginalia-mode)
-:custom
-(marginalia-align 'right)
-:config
-(setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil)))
+  :init
+  (marginalia-mode)
+  :custom
+  (marginalia-align 'right)
+  :config
+  (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil)))
 
 (use-package consult)
   #+end_src
@@ -174,64 +174,64 @@
   :hook (prog-mode . highlight-indent-guides-mode)
   :config
   (setq highlight-indent-guides-method 'character))
-  ;; (setq highlight-indent-guides-character 46))
+;; (setq highlight-indent-guides-character 46))
 
-    (setq scroll-conservatively 101
-	  scroll-margin 0
-	  scroll-preserve-screen-position 1)
+(setq scroll-conservatively 101
+      scroll-margin 0
+      scroll-preserve-screen-position 1)
 
-    (menu-bar-mode -1)
-    (if (display-graphic-p)
-	(progn
-	  (tool-bar-mode -1)
-	  (tooltip-mode -1)
-	  (scroll-bar-mode -1)
-	  (column-number-mode)
-	  (size-indication-mode)
-	  (set-fringe-mode 10)))
+(menu-bar-mode -1)
+(if (display-graphic-p)
+    (progn
+      (tool-bar-mode -1)
+      (tooltip-mode -1)
+      (scroll-bar-mode -1)
+      (column-number-mode)
+      (size-indication-mode)
+      (set-fringe-mode 10)))
 
-    (global-display-line-numbers-mode t)
-    (setq display-line-numbers-width-start t)
-    (dolist (mode '(org-mode-hook
-		    treemacs-mode-hook
-		    eshell-mode-hook))
-      (add-hook mode (lambda () (display-line-numbers-mode 0))))
+(global-display-line-numbers-mode t)
+(setq display-line-numbers-width-start t)
+(dolist (mode '(org-mode-hook
+		treemacs-mode-hook
+		eshell-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-    (set-face-attribute 'default nil :font "JetBrains Mono Medium" :height 140)
-    (set-face-attribute 'fixed-pitch nil :font "JetBrains Mono" :height 140)
-    (set-face-attribute 'variable-pitch nil :family "JetBrains Mono" :height 140 :weight 'regular)
+(set-face-attribute 'default nil :font "JetBrains Mono Medium" :height 140)
+(set-face-attribute 'fixed-pitch nil :font "JetBrains Mono" :height 140)
+(set-face-attribute 'variable-pitch nil :family "JetBrains Mono" :height 140 :weight 'regular)
 
-    (use-package all-the-icons)
+(use-package all-the-icons)
 
-    (use-package treemacs-all-the-icons
-      :requires all-the-icons)
+(use-package treemacs-all-the-icons
+  :requires all-the-icons)
 
-    (use-package all-the-icons-dired
-      :requires all-the-icons)
+(use-package all-the-icons-dired
+  :requires all-the-icons)
 
-    (use-package doom-themes
-      :requires (all-the-icons treemacs)
-      :config
-      (setq doom-themes-enable-bold t
-	    doom-themes-enable-italic t)
-      (load-theme 'doom-moonlight t)
-      (setq doom-themes-treemacs-theme "doom-colors")
-      (doom-themes-treemacs-config)
-      (doom-themes-org-config))
+(use-package doom-themes
+  :requires (all-the-icons treemacs)
+  :config
+  (setq doom-themes-enable-bold t
+	doom-themes-enable-italic t)
+  (load-theme 'doom-moonlight t)
+  (setq doom-themes-treemacs-theme "doom-colors")
+  (doom-themes-treemacs-config)
+  (doom-themes-org-config))
 
-    (use-package doom-modeline
-      :config
-      (doom-modeline-mode))
+(use-package doom-modeline
+  :config
+  (doom-modeline-mode))
 
-    (use-package dashboard
-      :config
-      (dashboard-setup-startup-hook)
-      (setq dashboard-startup-banner "~/.emacs.d/blackhole-lines.svg")
-      (setq dashboard-banner-logo-title "E  M  A  C  S ")
-      (setq dashboard-image-banner-max-height 300)
-      (setq dashboard-items nil)
-      (setq dashboard-footer-messages nil)
-      (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))))
+(use-package dashboard
+  :config
+  (dashboard-setup-startup-hook)
+  ;; (setq dashboard-startup-banner "~/.emacs.d/blackhole-lines.svg")
+  (setq dashboard-banner-logo-title "E  M  A  C  S ")
+  (setq dashboard-image-banner-max-height 300)
+  (setq dashboard-items nil)
+  (setq dashboard-footer-messages nil)
+  (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))))
   #+end_src
 
 * Which Key
@@ -272,18 +272,18 @@
 			     (my-todo-file :todo . "TODO")
 			     (my-todo-file :todo . "WAIT")
 			     (my-someday-file :todo . "")))
-  (variable-pitch-mode 1))
-(setq org-src-preserve-indentation t
-      org-src-window-setup 'current-window)
- 
+  (variable-pitch-mode 1)
+  (setq org-src-preserve-indentation t
+	org-src-window-setup 'current-window))
+
   #+end_src
 
 * Docker
   #+begin_src emacs-lisp
 (use-package dockerfile-mode
-:hook 'prog-mode-hook
-:config
-(put 'docker-image-name 'safe-local-variable #'stringp))
+  :hook 'prog-mode-hook
+  :config
+  (put 'docker-image-name 'safe-local-variable #'stringp))
   #+end_src
  
 * LSP
@@ -292,9 +292,9 @@
   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
   (setq lsp-headerline-breadcrumb-icons-enable nil)
   (lsp-headerline-breadcrumb-mode)
-(setq lsp-modeline-code-actions-enable nil)
-(flymake-mode)
-(setq lsp-modeline-diagnostics-enable t))
+  (setq lsp-modeline-code-actions-enable nil)
+  (flymake-mode)
+  (setq lsp-modeline-diagnostics-enable t))
 
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
@@ -303,75 +303,89 @@
   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
   :config
   (lsp-enable-which-key-integration t))
-  
+
 (use-package lsp-ui
   :hook (lsp-mode . lsp-ui-mode)
   :custom
   (lsp-ui-doc-position 'bottom))
-  
+
 (use-package flycheck
   :defer)
 
 (use-package lsp-treemacs
   :after lsp)
-  
+
+(use-package consult-lsp
+  :after lsp)
+
 ;; (use-package lsp-ivy
 ;;   :after lsp)
-  
-;; (use-package dap-mode
- ;;  ;; Uncomment the config below if you want all UI panes to be hidden by default!
- ;;  ;; :custom
- ;;  ;; (lsp-enable-dap-auto-configure nil)
- ;;  ;; :config
- ;;  ;; (dap-ui-mode 1)
- ;;  :commands dap-debug
- ;;  :config
- ;;  ;; Set up Node debugging
- ;;  (require 'dap-node)
- ;;  (dap-node-setup) ;; Automatically installs Node debug adapter if needed
 
- ;;  ;; Bind `C-c l d` to `dap-hydra` for easy access
- ;;  (general-define-key
- ;;    :keymaps 'lsp-mode-map
- ;;    :prefix lsp-keymap-prefix
- ;;    "d" '(dap-hydra t :wk "debugger")))
- (use-package lsp-pyright
+;; (use-package dap-mode
+;;  ;; Uncomment the config below if you want all UI panes to be hidden by default!
+;;  ;; :custom
+;;  ;; (lsp-enable-dap-auto-configure nil)
+;;  ;; :config
+;;  ;; (dap-ui-mode 1)
+;;  :commands dap-debug
+;;  :config
+;;  ;; Set up Node debugging
+;;  (require 'dap-node)
+;;  (dap-node-setup) ;; Automatically installs Node debug adapter if needed
+
+;;  ;; Bind `C-c l d` to `dap-hydra` for easy access
+;;  (general-define-key
+;;    :keymaps 'lsp-mode-map
+;;    :prefix lsp-keymap-prefix
+;;    "d" '(dap-hydra t :wk "debugger")))
+(use-package lsp-pyright
   :ensure t
   :hook (python-mode . (lambda ()
-                          (require 'lsp-pyright)
-                          (lsp))))  ; or lsp-deferred
+                         (require 'lsp-pyright)
+                         (lsp))))  ; or lsp-deferred
 
 (use-package python-mode
   :ensure t)
-  ;; :hook (python-mode . lsp-deferred)
-  ;; :custom
-  ;; NOTE: Set these if Python 3 is called "python3" on your system!
-  ;; (python-shell-interpreter "python3")
-  ;; (dap-python-executable "python3")
-  ;; (dap-python-debugger 'debugpy)
-  ;; :config
-  ;; (require 'dap-python))
+
+(use-package dap-mode
+  ;; Uncomment the config below if you want all UI panes to be hidden by default!
+  :ensure t
+  :after lsp-mode
+  :custom
+  (dap-python-debugger 'debugpy)
+  :config
+  (require 'dap-python)
+  (dap-mode t)
+  (dap-tooltip-mode t)
+  (tooltip-mode t))
+
+;; :hook (python-mode . lsp-deferred)
+;; :custom
+;; NOTE: Set these if Python 3 is called "python3" on your system!
+;; (python-shell-interpreter "python3")
+;; (dap-python-executable "python3")
+;; (dap-python-debugger 'debugpy)
+;; :config
+;; (require 'dap-python))
 ;; (setq lsp-pylsp-plugins-pydocstyle-enabled nil))
-  
+
 ;; (add-hook 'python-mode-hook
 ;; (lambda ()
 ;; (setq indent-tabs-mode t)
 ;; (setq tab-width 4)))
 
-
 (use-package company
   :after lsp-mode
   :hook (lsp-mode . company-mode)
   :bind (:map company-active-map
-         ("<tab>" . company-complete-selection))
-        (:map lsp-mode-map
-         ("<tab>" . company-indent-or-complete-common))
+              ("<tab>" . company-complete-selection))
+  (:map lsp-mode-map
+        ("<tab>" . company-indent-or-complete-common))
   :custom
   (company-minimum-prefix-length 1)
   (company-idle-delay 0.0))
 
 (use-package company-box
   :hook (company-mode . company-box-mode))
-  
   #+end_src
 
