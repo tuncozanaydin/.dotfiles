@@ -47,6 +47,8 @@
 ;; Make ECS quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
+(recentf-mode t)
+
 (use-package general
   :config
   (general-swap-key nil '(motion normal visual) "n" "j")
@@ -116,7 +118,6 @@
 (use-package vertico
 :ensure t
 :init
-(recentf-mode t)
 (vertico-mode)
 :custom
 (vertico-cycle t))
@@ -146,6 +147,11 @@
 (use-package consult)
   #+end_src
 
+* Helpful
+  #+begin_src emacs-lisp
+(use-package helpful
+  :ensure t)
+  #+end_src
 
 * Flycheck
   #+begin_src emacs-lisp
