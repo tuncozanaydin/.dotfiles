@@ -94,10 +94,10 @@
     "f" '(:ignore t :which-key "file")
     "f f" '(find-file :which-key "Find file")
     "f s" 'save-buffer
-    "f r" '(counsel-recentf :which-key "Recent files")
+    "f r" '(consult-recent-file :which-key "Recent files")
     "b" '(:ignore t :which-key "buffer")
     "b k" 'kill-current-buffer
-    "b b" 'ivy-switch-buffer
+    "b b" 'switch-to-buffer
     "q q" 'save-buffers-kill-terminal
     "w" '(:ignore t :which-key "window")
     "w w" '(evil-window-next :which-key "next window")
@@ -107,16 +107,43 @@
     "w o" '(delete-other-windows :which-key "close others")
     "h" '(:ignore t :which-key "help")
     "h k" '(describe-key :which-key "describe key")
-    "h v" '(counsel-describe-variable :which-key "describe variable")
-    "h f" '(counsel-describe-function :which-key "describe function")))
+    "h v" '(describe-variable :which-key "describe variable")
+    "h f" '(describe-function :which-key "describe function")))
   #+end_src
 
-* Counsel
+* Vertico
   #+begin_src emacs-lisp
-(use-package counsel
-  :config
-  (counsel-mode)
-  (ivy-mode))
+(use-package vertico
+:ensure t
+:init
+(recentf-mode t)
+(vertico-mode)
+:custom
+(vertico-cycle t))
+
+
+(use-package orderless
+:init
+(setq completion-category-defaults nil)
+:custom
+(completion-styles '(orderless))
+(completion-category-overrides '((file (styles . (partial-completion))))))
+
+(use-package savehist
+:init
+(savehist-mode))
+
+(use-package embark)
+
+(use-package marginalia
+:init
+(marginalia-mode)
+:custom
+(marginalia-align 'right)
+:config
+(setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil)))
+
+(use-package consult)
   #+end_src
 
 
@@ -282,8 +309,8 @@
 (use-package lsp-treemacs
   :after lsp)
   
-(use-package lsp-ivy
-  :after lsp)
+;; (use-package lsp-ivy
+;;   :after lsp)
   
 ;; (use-package dap-mode
  ;;  ;; Uncomment the config below if you want all UI panes to be hidden by default!
