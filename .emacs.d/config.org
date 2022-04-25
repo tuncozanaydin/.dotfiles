@@ -153,13 +153,6 @@
   :ensure t)
   #+end_src
 
-* Flycheck
-  #+begin_src emacs-lisp
-(use-package flycheck
-  :ensure t
-  :init 
-  (global-flycheck-mode))
-  #+end_src
 
 * GUI
   #+begin_src emacs-lisp
@@ -244,7 +237,6 @@
 * Terminal
   #+begin_src emacs-lisp
 (use-package clipetty
-:ensure t
 :hook (after-init . global-clipetty-mode))
 
 (use-package evil-terminal-cursor-changer)
@@ -286,6 +278,13 @@
   (put 'docker-image-name 'safe-local-variable #'stringp))
   #+end_src
  
+* Flycheck
+  #+begin_src emacs-lisp
+(use-package flycheck
+  :init 
+  (global-flycheck-mode))
+  #+end_src
+
 * LSP
   #+begin_src emacs-lisp
 (defun efs/lsp-mode-setup ()
@@ -318,34 +317,14 @@
 (use-package consult-lsp
   :after lsp)
 
-;; (use-package lsp-ivy
-;;   :after lsp)
-
-;; (use-package dap-mode
-;;  ;; Uncomment the config below if you want all UI panes to be hidden by default!
-;;  ;; :custom
-;;  ;; (lsp-enable-dap-auto-configure nil)
-;;  ;; :config
-;;  ;; (dap-ui-mode 1)
-;;  :commands dap-debug
-;;  :config
-;;  ;; Set up Node debugging
-;;  (require 'dap-node)
-;;  (dap-node-setup) ;; Automatically installs Node debug adapter if needed
-
-;;  ;; Bind `C-c l d` to `dap-hydra` for easy access
-;;  (general-define-key
-;;    :keymaps 'lsp-mode-map
-;;    :prefix lsp-keymap-prefix
-;;    "d" '(dap-hydra t :wk "debugger")))
 (use-package lsp-pyright
-  :ensure t
+:after (lsp python-mode)
   :hook (python-mode . (lambda ()
                          (require 'lsp-pyright)
-                         (lsp))))  ; or lsp-deferred
+                         (lsp-deferred))))  ; or lsp-deferred
 
 (use-package python-mode
-  :ensure t)
+  :hook (python-mode . lsp-deferred))
 
 (use-package dap-mode
   ;; Uncomment the config below if you want all UI panes to be hidden by default!
