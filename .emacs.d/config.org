@@ -19,6 +19,44 @@
 
 * Garbage Collection
   #+begin_src emacs-lisp
+(straight-use-package 'gcmh)
+(straight-use-package 'no-littering)
+(straight-use-package 'evil)
+(straight-use-package 'evil-commentary)
+(straight-use-package 'general)
+(straight-use-package 'vertico)
+(straight-use-package 'orderless)
+(straight-use-package 'savehist)
+(straight-use-package 'embark)
+(straight-use-package 'marginalia)
+(straight-use-package 'consult)
+(straight-use-package 'helpful)
+(straight-use-package 'highlight-indent-guides)
+(straight-use-package 'all-the-icons)
+(straight-use-package 'treemacs-all-the-icons)
+(straight-use-package 'all-the-icons-dired)
+(straight-use-package 'doom-themes)
+(straight-use-package 'doom-modeline)
+(straight-use-package 'dashboard)
+(straight-use-package 'which-key)
+(straight-use-package 'clipetty)
+(straight-use-package 'evil-terminal-cursor-changer)
+(straight-use-package 'dockerfile-mode)
+(straight-use-package 'flycheck)
+(straight-use-package 'lsp-mode)
+(straight-use-package 'lsp-ui)
+(straight-use-package 'lsp-treemacs)
+(straight-use-package 'consult-lsp)
+(straight-use-package 'lsp-pyright)
+(straight-use-package 'python-mode)
+(straight-use-package 'dap-mode)
+(straight-use-package 'company)
+(straight-use-package 'company-box)
+
+  #+end_src
+
+* Garbage Collection
+  #+begin_src emacs-lisp
 (use-package gcmh
   :config
   (gcmh-mode 1))
@@ -239,10 +277,11 @@
 (use-package clipetty
 :hook (after-init . global-clipetty-mode))
 
-(use-package evil-terminal-cursor-changer)
+(use-package evil-terminal-cursor-changer
+:config
 (unless (display-graphic-p)
   (require 'evil-terminal-cursor-changer)
-  (evil-terminal-cursor-changer-activate))
+  (evil-terminal-cursor-changer-activate)))
   #+end_src
 
 * Org
@@ -308,8 +347,6 @@
   :custom
   (lsp-ui-doc-position 'bottom))
 
-(use-package flycheck
-  :defer)
 
 (use-package lsp-treemacs
   :after lsp)
