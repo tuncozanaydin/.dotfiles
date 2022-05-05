@@ -71,7 +71,14 @@
   #+begin_src emacs-lisp
 (use-package evil
   :init
+(setq evil-want-keybinding nil)
+(setq evil-want-integration t)
   (evil-mode 1))
+
+(use-package evil-collection
+:after evil
+:config
+(evil-collection-init))
 
 (use-package evil-commentary
   :after evil
@@ -87,14 +94,21 @@
 
 (recentf-mode t)
 
+;; (use-package evil-swap-keys
+;; :after evil
+;; :config
+;; (global-evil-swap-keys-mode)
+;; (evil-swap-keys-add-pair "n" "j"))
+
 (use-package general
+:after evil-collection
   :config
-  (general-swap-key nil '(motion normal visual) "n" "j")
-  (general-swap-key nil '(motion normal visual) "e" "k")
-  (general-swap-key nil '(motion normal visual) "i" "l")
-  (general-swap-key nil '(motion normal visual) "N" "J")
-  (general-swap-key nil '(motion normal visual) "E" "K")
-  (general-swap-key nil '(motion normal visual) "I" "L")
+  ;; (general-swap-key nil '(motion normal visual) "n" "j")
+  ;; (general-swap-key nil '(motion normal visual) "e" "k")
+  ;; (general-swap-key nil '(motion normal visual) "i" "l")
+  ;; (general-swap-key nil '(motion normal visual) "N" "J")
+  ;; (general-swap-key nil '(motion normal visual) "E" "K")
+  ;; (general-swap-key nil '(motion normal visual) "I" "L")
 
   (setq toa/org-agenda-mode-map (make-sparse-keymap))
   (general-define-key :keymaps 'toa/org-agenda-mode-map
@@ -187,8 +201,7 @@
 
 * Helpful
   #+begin_src emacs-lisp
-(use-package helpful
-  :ensure t)
+(use-package helpful)
   #+end_src
 
 
@@ -270,6 +283,11 @@
 (use-package which-key
   :config
   (which-key-mode))
+  #+end_src
+
+* Magit
+  #+begin_src emacs-lisp
+(use-package magit)
   #+end_src
 
 * Terminal
