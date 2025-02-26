@@ -1,0 +1,146 @@
+* No Littering
+#+begin_src emacs-lisp
+  (setq emacs-litter-directory
+	(expand-file-name "litter/" user-emacs-directory))
+  (setq backup-directory-alist `(("." . "~/.emacs.d/litter/saves")))
+  (setq no-littering-etc-directory
+	(expand-file-name "config/" emacs-litter-directory))
+  (setq no-littering-var-directory
+	(expand-file-name "data/" emacs-litter-directory))
+  (use-package no-littering
+    :ensure t)
+#+end_src
+
+* Evil Mode
+#+begin_src emacs-lisp
+  (use-package evil
+    :ensure t)
+  (evil-mode t)
+
+  (use-package evil-org
+    :ensure t
+    :after org
+    :hook (org-mode . (lambda () evil-org-mode))
+    :config
+    (require 'evil-org-agenda)
+    (evil-org-agenda-set-keys))
+  #+end_src
+
+* Vertico
+#+begin_src emacs-lisp
+  (use-package vertico
+    :ensure t)
+  (vertico-mode)
+#+end_src
+
+* Smooth Scrolling
+#+begin_src emacs-lisp
+  (pixel-scroll-precision-mode)
+  (setq scroll-step 1
+	scroll-conservatively 10000)
+#+end_src
+
+* Fonts
+#+begin_src emacs-lisp
+  (set-face-attribute 'default nil
+		      :family "Codelia Ligatures"
+		      :height 110
+		      :weight 'regular)
+  (use-package ligature
+    :ensure t
+    :config (ligature-set-ligatures 't '(">=")))
+  (global-ligature-mode t)
+#+end_src
+
+* Theme
+#+begin_src emacs-lisp
+  (use-package doom-themes
+    :ensure t)
+  (load-theme 'doom-moonlight t)
+#+end_src
+
+* Which-key 
+#+begin_src emacs-lisp
+  (use-package which-key
+    :ensure t)
+  (which-key-mode)
+#+end_src
+
+* Encryption
+#+begin_src emacs-lisp
+  (require 'epa-file)
+  (epa-file-enable)
+  (setq epa-file-encryp-to "tuncozanaydin@gmail.com")
+  (setq epg-pinetry-mode 'loopback)
+#+end_src
+
+* Org mode
+#+begin_src emacs-lisp
+#+end_src
+
+* Org-roam
+#+begin_src emacs-lisp
+  (use-package org-roam
+    :ensure t
+    :custom
+    (org-roam-directory "~/org/roam")
+    :bind (("C-c n l" . org-roam-buffer-toggle)
+	   ("C-c n f" . org-roam-node-find)
+	   ("C-c n i" . org-roam-node-insert))
+    :config
+    (setq org-tab-follows-link t)
+    (org-roam-setup))
+#+end_src
+
+* Emacs GUI
+#+begin_src emacs-lisp
+
+    (menu-bar-mode -1)
+  ;;  (if (display-graphic-p)
+  ;;      (progn
+  ;;	(tool-bar-mode -1)
+  ;;	(tooltip-mode -1)
+  ;;	(scroll-bar-mode -1)
+  ;;	(column-number-mode)
+  ;;	(size-indication-mode)
+  ;;	(set-fringe-mode 10)))
+    (tool-bar-mode -1)
+    (tooltip-mode -1)
+    (scroll-bar-mode -1)
+    (column-number-mode)
+    (size-indication-mode)
+    (set-fringe-mode 10)
+
+    (setq visible-bell t)
+
+    (use-package all-the-icons
+      :ensure t)
+
+    (use-package doom-modeline
+      :ensure t)
+    (doom-modeline-mode t)
+
+    (use-package dashboard
+      :config
+      (setq dashboard-startup-banner "~/.emacs.d/blackhole-lines.svg")
+      (setq dashboard-image-banner-max-height 500)
+      (setq dashboard-banner-logo-title "Ξ  M  Λ  C  S ")
+      (setq dashboard-items nil)
+      (setq dashboard-footer-messages '(""))
+      (setq dashboard-center-content t)
+      (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+      (dashboard-setup-startup-hook))
+#+end_src
+
+
+* Treemacs 
+#+begin_src emacs-lisp
+  (use-package treemacs
+    :ensure t
+    :defer t
+    :init
+    (with-eval-after-load 'winum
+      (define-key winum-keymap (kbd "M-0") #'treemacs-select-window)))
+  :config
+  (setq treemacs-text-scale -1)
+#+end_src
