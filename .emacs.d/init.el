@@ -9,7 +9,7 @@
 (eval-and-compile
   (setq use-package-always-ensure t
         use-package-expand-minimally t))
- 
+
 ;; Enable if packages should be pulled from github        
 ;;(unless (package-installed-p 'vc-use-package)
 ;;  (package-vc-install "https://github.com/slotThe/vc-use-package"))
@@ -26,9 +26,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages '(welcome-dashboard))
+ '(package-selected-packages nil)
  '(package-vc-selected-packages
-   '((vc-use-package :vc-backend Git :url "https://github.com/slotThe/vc-use-package"))))
+   '((vc-use-package :vc-backend Git :url
+		     "https://github.com/slotThe/vc-use-package"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

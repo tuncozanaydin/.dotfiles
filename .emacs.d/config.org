@@ -33,6 +33,20 @@
   (vertico-mode)
 #+end_src
 
+* Corfu
+#+begin_src emacs-lisp
+  (use-package corfu
+    :ensure t
+    :custom
+    (corfu-auto t)
+    :init
+    (global-corfu-mode))
+
+  (use-package emacs
+    :custom
+    (tab-always-indent 'complete))
+#+end_src
+
 * Smooth Scrolling
 #+begin_src emacs-lisp
   (pixel-scroll-precision-mode)
@@ -132,7 +146,6 @@
       (dashboard-setup-startup-hook))
 #+end_src
 
-
 * Treemacs 
 #+begin_src emacs-lisp
   (use-package treemacs
@@ -144,3 +157,17 @@
   :config
   (setq treemacs-text-scale -1)
 #+end_src
+
+* Eglot
+#+begin_src emacs-lisp
+  (use-package eglot
+    :ensure t
+    :hook (python-mode . eglot-ensure))
+
+  (defun toa-setup-completion ()
+    (setq-local completion-at-point-functions
+  	      (list #'eglot-completion-at-point)))
+ 
+  (add-hook 'eglot-managed-mode-hook 'toa-setup-completion)
+#+end_src
+
