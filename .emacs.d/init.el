@@ -9,7 +9,7 @@
 (eval-and-compile
   (setq use-package-always-ensure t
         use-package-expand-minimally t))
-
+ 
 ;; Enable if packages should be pulled from github        
 ;;(unless (package-installed-p 'vc-use-package)
 ;;  (package-vc-install "https://github.com/slotThe/vc-use-package"))
