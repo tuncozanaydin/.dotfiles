@@ -150,16 +150,40 @@
   (setq treemacs-text-scale -1)
 #+end_src
 
+* Conda
+#+begin_src emacs-lisp :tangle config.el
+  (use-package conda
+    :ensure t
+    :init
+    (setq conda-anaconda-home (expand-file-name "~/miniconda3"))
+    (setq conda-env-home-directory (expand-file-name "~/miniconda3/envs/"))
+    :config
+    (conda-env-initialize-interactive-shells)
+    (conda-env-initialize-eshell)
+    (conda-env-autoactivate-mode t))  ;; Auto-activate Conda environments when opening files
+
+   (defun my/select-conda-env ()
+    "Prompt to activate a Conda environment if one isn't set in .dir-locals.el."
+    (interactive)
+    (unless conda-env-current-name
+      (let ((env (completing-read "Select Conda Environment: "
+                                  (conda-env-candidates))))
+        (conda-env-activate env))))
+
+  ;; Hook it into python-mode
+  (add-hook 'python-mode-hook #'my/select-conda-env)
+#+end_src
+
 * Eglot
 #+begin_src emacs-lisp :tangle config.el
   (use-package eglot
     :ensure t
     :hook (python-mode . eglot-ensure))
 
-  (defun toa-setup-completion ()
+  (defun toa/setup-completion ()
     (setq-local completion-at-point-functions
   	      (list #'eglot-completion-at-point)))
  
-  (add-hook 'eglot-managed-mode-hook 'toa-setup-completion)
+  (add-hook 'eglot-managed-mode-hook 'toa/setup-completion)
 #+end_src
 

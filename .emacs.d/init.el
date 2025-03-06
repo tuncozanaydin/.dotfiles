@@ -41,3 +41,19 @@
   (progn
     (message "Loading and tangling config.org...")
     (org-babel-load-file toa/config-org)))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(all-the-icons conda corfu dashboard doom-modeline doom-themes
+		   evil-org ligature no-littering org-roam treemacs
+		   vertico))
+ '(safe-local-variable-directories '("/home/tunc/work/test3/" "/home/tunc/tmp/")))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
