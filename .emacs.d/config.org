@@ -106,41 +106,36 @@
 
 * Emacs GUI
 #+begin_src emacs-lisp :tangle config.el
-    (menu-bar-mode -1)
-  ;;  (if (display-graphic-p)
-  ;;      (progn
-  ;;	(tool-bar-mode -1)
-  ;;	(tooltip-mode -1)
-  ;;	(scroll-bar-mode -1)
-  ;;	(column-number-mode)
-  ;;	(size-indication-mode)
-  ;;	(set-fringe-mode 10)))
-    (tool-bar-mode -1)
-    (tooltip-mode -1)
-    (scroll-bar-mode -1)
-    (column-number-mode)
-    (size-indication-mode)
-    (set-fringe-mode 10)
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (tooltip-mode -1)
+  (scroll-bar-mode -1)
+  (column-number-mode)
+  (size-indication-mode)
+  (set-fringe-mode 10)
 
-    (setq visible-bell t)
+  (setq visible-bell t)
 
-    (use-package all-the-icons
-      :ensure t)
+  ;; Make comments italic
+  (set-face-attribute 'font-lock-comment-face nil :slant 'italic)
 
-    (use-package doom-modeline
-      :ensure t)
-    (doom-modeline-mode t) 
+  (use-package all-the-icons
+    :ensure t)
 
-    (use-package dashboard
-      :config
-      (setq dashboard-startup-banner "~/.emacs.d/blackhole-lines.svg")
-      (setq dashboard-image-banner-max-height 500)
-      (setq dashboard-banner-logo-title "Ξ  M  Λ  C  S ")
-      (setq dashboard-items nil)
-      (setq dashboard-footer-messages '(""))
-      (setq dashboard-center-content t)
-      (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
-      (dashboard-setup-startup-hook))
+  (use-package doom-modeline
+    :ensure t)
+  (doom-modeline-mode t) 
+
+  (use-package dashboard
+    :config
+    (setq dashboard-startup-banner "~/.emacs.d/blackhole-lines.svg")
+    (setq dashboard-image-banner-max-height 500)
+    (setq dashboard-banner-logo-title "Ξ  M  Λ  C  S ")
+    (setq dashboard-items nil)
+    (setq dashboard-footer-messages '(""))
+    (setq dashboard-center-content t)
+    (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+    (dashboard-setup-startup-hook))
 #+end_src
 
 * Treemacs 
