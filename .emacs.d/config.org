@@ -1,5 +1,5 @@
 * No Littering
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle config.el
   (setq emacs-litter-directory
 	(expand-file-name "litter/" user-emacs-directory))
   (setq backup-directory-alist `(("." . "~/.emacs.d/litter/saves")))
@@ -12,7 +12,7 @@
 #+end_src
 
 * Evil Mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle config.el
   (use-package evil
     :ensure t)
   (evil-mode t)
@@ -27,14 +27,14 @@
   #+end_src
 
 * Vertico
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle config.el
   (use-package vertico
     :ensure t)
   (vertico-mode)
 #+end_src
 
 * Corfu
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle config.el 
   (use-package corfu
     :ensure t
     :custom
@@ -48,17 +48,15 @@
 #+end_src
 
 * Smooth Scrolling
-#+begin_src emacs-lisp
-  (pixel-scroll-precision-mode)
-  (setq scroll-step 1
-	scroll-conservatively 10000)
+#+begin_src emacs-lisp :tangle config.el
+  (setq scroll-conservatively 101)
 #+end_src
 
 * Fonts
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle config.el
   (set-face-attribute 'default nil
 		      :family "Codelia Ligatures"
-		      :height 110
+		      :height 120
 		      :weight 'regular)
   (use-package ligature
     :ensure t
@@ -67,21 +65,21 @@
 #+end_src
 
 * Theme
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle config.el
   (use-package doom-themes
     :ensure t)
   (load-theme 'doom-moonlight t)
 #+end_src
 
 * Which-key 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle config.el
   (use-package which-key
     :ensure t)
   (which-key-mode)
 #+end_src
 
 * Encryption
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle config.el
   (require 'epa-file)
   (epa-file-enable)
   (setq epa-file-encryp-to "tuncozanaydin@gmail.com")
@@ -89,26 +87,25 @@
 #+end_src
 
 * Org mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle config.el
 #+end_src
 
 * Org-roam
 #+begin_src emacs-lisp
-  (use-package org-roam
-    :ensure t
-    :custom
-    (org-roam-directory "~/org/roam")
-    :bind (("C-c n l" . org-roam-buffer-toggle)
-	   ("C-c n f" . org-roam-node-find)
-	   ("C-c n i" . org-roam-node-insert))
-    :config
-    (setq org-tab-follows-link t)
-    (org-roam-setup))
+;;  (use-package org-roam
+;;    :ensure t
+;;    :custom
+;;    (org-roam-directory "~/org/roam")
+;;    :bind (("C-c n l" . org-roam-buffer-toggle)
+;;	   ("C-c n f" . org-roam-node-find)
+;;	   ("C-c n i" . org-roam-node-insert))
+;;    :config
+;;    (setq org-tab-follows-link t)
+;;    (org-roam-setup))
 #+end_src
 
 * Emacs GUI
-#+begin_src emacs-lisp
-
+#+begin_src emacs-lisp :tangle config.el
     (menu-bar-mode -1)
   ;;  (if (display-graphic-p)
   ;;      (progn
@@ -132,7 +129,7 @@
 
     (use-package doom-modeline
       :ensure t)
-    (doom-modeline-mode t)
+    (doom-modeline-mode t) 
 
     (use-package dashboard
       :config
@@ -147,7 +144,7 @@
 #+end_src
 
 * Treemacs 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle config.el
   (use-package treemacs
     :ensure t
     :defer t
@@ -159,7 +156,7 @@
 #+end_src
 
 * Eglot
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle config.el
   (use-package eglot
     :ensure t
     :hook (python-mode . eglot-ensure))

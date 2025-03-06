@@ -1,8 +1,10 @@
+;; -*- lexical-binding: t; -*-
 (require 'package)
-(add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
 
+;; Ensure use-package is installed (Emacs 29+ includes it but without :ensure support)
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
@@ -10,29 +12,32 @@
   (setq use-package-always-ensure t
         use-package-expand-minimally t))
 
-;; Enable if packages should be pulled from github        
-;;(unless (package-installed-p 'vc-use-package)
-;;  (package-vc-install "https://github.com/slotThe/vc-use-package"))
-;;(require 'vc-use-package)
 
-(org-babel-load-file
- (expand-file-name
-  "config.org"
-  user-emacs-directory))
-  
+;; Define paths
+(add-to-list 'load-path "~/.dotfiles/.emacs.d/")
+(defvar toa/emacs-dir (expand-file-name "~/.dotfiles/.emacs.d/"))
+(defvar toa/config-org (expand-file-name "config.org" toa/emacs-dir))
+(defvar toa/config-el  (expand-file-name "config.el" toa/emacs-dir))
+(defvar toa/config-elc (expand-file-name "config.elc" toa/emacs-dir))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages nil)
- '(package-vc-selected-packages
-   '((vc-use-package :vc-backend Git :url
-		     "https://github.com/slotThe/vc-use-package"))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+(defun toa/tangle-and-compile-config ()
+  "Tangle `config.org` to `config.el`, then byte-compile `config.el` if it changed."
+  (when (string-equal (buffer-file-name) toa/config-org)
+    (message "Tangling config.org to config.el...")
+    (org-babel-tangle)
+    (when (file-exists-p toa/config-el)
+      (message "Byte-compiling config.el...")
+      (byte-compile-file toa/config-el)
+      (message "Compilation complete!"))))
+
+;; Add hook to automatically tangle and compile on save
+(add-hook 'after-save-hook #'toa/tangle-and-compile-config)
+
+;; Load the compiled config if available, otherwise tangle and load
+(if (file-exists-p toa/config-elc)
+    (progn
+      (message "Loading byte-compiled config.elc...")
+      (load toa/config-elc))
+  (progn
+    (message "Loading and tangling config.org...")
+    (org-babel-load-file toa/config-org)))
