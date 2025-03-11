@@ -269,6 +269,7 @@
     (treemacs-follow-mode t)  ;; Auto-follow the current file
     (treemacs-filewatch-mode t)  ;; Auto-refresh when files change
     (treemacs-git-mode 'deferred)  ;; Show Git status (deferred for performance)
+    (treemacs-user-mode-line-format " ")
     (treemacs-text-scale -1)
     (treemacs-resize-icons 11)
     :bind
