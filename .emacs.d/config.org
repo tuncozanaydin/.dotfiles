@@ -160,6 +160,11 @@
   (use-package doom-themes
     :ensure t)
   (load-theme 'doom-moonlight t)
+
+  (use-package solaire-mode
+    :ensure t
+    :config
+    (solaire-global-mode 1))
 #+end_src
 
 * Which-key 
