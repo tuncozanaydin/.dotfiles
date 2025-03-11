@@ -1,27 +1,27 @@
 #+TITLE: Emacs Configuration
 #+AUTHOR: Tunc Aydin
-#+PROPERTY header-args :tangle config.el
 
 * General Settings
 #+begin_src emacs-lisp :tangle config.el
+  ;; -*- lexical-binding: t; -*-
   ;; Load necessary built in packages
-  (require 'package)
-  (require 'project)
-  (require 'org)
-  (require 'ob-tangle)
+  ;;(require 'project)
+  ;;(require 'org)
+  ;;(require 'ob-tangle)
+  (require 'eglot)
 #+end_src
 
 * Auto-Tangle Byte-Compile config.el
 #+begin_src emacs-lisp :tangle config.el
-    (defun toa/tangle-and-compile-config ()
-    "Tangle `config.org` to `config.el`, then byte-compile `config.el` if it changed."
-    (when (string-equal (buffer-file-name) toa/config-org)
-      (message "Tangling config.org to config.el...")
-      (org-babel-tangle)
-      (when (file-exists-p toa/config-el)
-        (message "Byte-compiling config.el...")
-        (byte-compile-file toa/config-el)
-        (message "Compilation complete!"))))
+  (defun toa/tangle-and-compile-config ()
+  "Tangle `config.org` to `config.el`, then byte-compile `config.el` if it changed."
+  (when (and buffer-file-name (string-equal (buffer-file-name) toa/config-org))
+    (message "Tangling config.org to config.el...")
+    (org-babel-tangle)
+    (when (file-exists-p toa/config-el)
+      (message "Byte-compiling config.el...")
+      (byte-compile-file toa/config-el)
+      (message "Compilation complete!"))))
 
   ;; Add hook to automatically tangle and compile on save
   (add-hook 'after-save-hook #'toa/tangle-and-compile-config)
@@ -31,11 +31,14 @@
 #+begin_src emacs-lisp :tangle config.el
   (setq emacs-litter-directory
 	(expand-file-name "litter/" user-emacs-directory))
+  (unless (file-directory-p emacs-litter-directory)
+    (make-directory emacs-litter-directory t))
+
   (setq backup-directory-alist `(("." . "~/.emacs.d/litter/saves")))
   (setq no-littering-etc-directory
-	(expand-file-name "config/" emacs-litter-directory))
+        (expand-file-name "config/" emacs-litter-directory))
   (setq no-littering-var-directory
-	(expand-file-name "data/" emacs-litter-directory))
+        (expand-file-name "data/" emacs-litter-directory))
   (use-package no-littering
     :ensure t)
 #+end_src
@@ -85,7 +88,7 @@
   (defun toa/setup-completion ()
     (setq-local completion-at-point-functions
   	      (list #'eglot-completion-at-point)))
- 
+
   (add-hook 'eglot-managed-mode-hook 'toa/setup-completion) 
 #+end_src
 
@@ -101,7 +104,7 @@
     (conda-env-initialize-eshell)
     (conda-env-autoactivate-mode t))  ;; Auto-activate Conda environments when opening files
 
-   (defun my/select-conda-env ()
+   (defun toa/select-conda-env ()
     "Prompt to activate a Conda environment if one isn't set in .dir-locals.el."
     (interactive)
     (unless conda-env-current-name
@@ -110,7 +113,7 @@
         (conda-env-activate env))))
 
   ;; Hook it into python-mode
-  (add-hook 'python-mode-hook #'my/select-conda-env)
+  (add-hook 'python-mode-hook #'toa/select-conda-env)
 
 
 #+end_src
@@ -234,12 +237,7 @@
 * Treemacs 
 #+begin_src emacs-lisp :tangle config.el
   (use-package treemacs
-    :ensure t
-    :defer t
-    :init
-    (with-eval-after-load 'winum
-      (define-key winum-keymap (kbd "M-0") #'treemacs-select-window)))
-  :config
+    :ensure t)
   (setq treemacs-text-scale -1)
 #+end_src
 

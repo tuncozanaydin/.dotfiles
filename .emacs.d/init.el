@@ -1,8 +1,15 @@
 ;; -*- lexical-binding: t; -*-
+
+;; Temporarily increase GC threshold for faster startup
+(setq gc-cons-threshold (* 100 1024 1024)) ;; 100MB
+(setq gc-cons-percentage 0.6)
+
+(setq native-comp-deferred-compilation t)
+
 (require 'package)
-(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-(package-initialize)
+(setq package-archives
+      '(("gnu"   . "https://elpa.gnu.org/packages/")
+        ("melpa" . "https://melpa.org/packages/")))
 
 ;; Ensure use-package is installed (Emacs 29+ includes it but without :ensure support)
 (unless (package-installed-p 'use-package)
@@ -11,7 +18,6 @@
 (eval-and-compile
   (setq use-package-always-ensure t
         use-package-expand-minimally t))
-
 
 ;; Define paths
 (add-to-list 'load-path "~/.dotfiles/.emacs.d/")
@@ -29,19 +35,9 @@
     (message "Loading and tangling config.org...")
     (org-babel-load-file toa/config-org)))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(all-the-icons conda corfu dashboard doom-modeline doom-themes
-		   evil-org ligature no-littering org-roam treemacs
-		   vertico))
- '(safe-local-variable-directories '("/home/tunc/work/test3/" "/home/tunc/tmp/")))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+;; Restore normal GC thresholds after startup
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (setq gc-cons-threshold (* 10 1024 1024)) ;; 10MB
+            (setq gc-cons-percentage 0.1)
+            (message "GC restored to normal settings")))
