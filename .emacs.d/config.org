@@ -245,7 +245,7 @@
   (use-package dashboard
     :config
     (setq dashboard-startup-banner "~/.emacs.d/blackhole-lines.svg")
-    (setq dashboard-image-banner-max-height 800)
+    (setq dashboard-image-banner-max-height 600)
     (setq dashboard-banner-logo-title "Ξ  M  Λ  C  S ")
     (setq dashboard-items nil)
     (setq dashboard-footer-messages '(""))
@@ -257,7 +257,28 @@
 * Treemacs 
 #+begin_src emacs-lisp :tangle config.el
   (use-package treemacs
-    :ensure t)
-  (setq treemacs-text-scale -1)
+    :ensure t
+    :custom
+    (treemacs-collapse-dirs 3)  ;; Collapse empty directories
+    (treemacs-width 25)  ;; Increase width for better visibility
+    (treemacs-follow-mode t)  ;; Auto-follow the current file
+    (treemacs-filewatch-mode t)  ;; Auto-refresh when files change
+    (treemacs-git-mode 'deferred)  ;; Show Git status (deferred for performance)
+    (treemacs-text-scale -1)
+    (treemacs-resize-icons 11)
+    :bind
+    (("C-x t t" . treemacs)))  ;; Toggle Treemacs
+  ;;  (use-package treemacs
+  ;;    :ensure t)
+  ;;  (setq treemacs-text-scale -1)
+
+  (use-package treemacs-evil
+  :after (treemacs evil)
+  :ensure t)
+
+  (require 'treemacs-all-the-icons)
+  ;;(treemacs-load-all-the-icons-with-workaround-font "Hermit")
+  (treemacs-load-theme "all-the-icons")
+
 #+end_src
 

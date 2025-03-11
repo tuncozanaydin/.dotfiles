@@ -51,7 +51,7 @@
    '(all-the-icons conda corfu corfu-terminal dashboard doom-modeline
 		   doom-themes esup evil-org ligature marginalia
 		   no-littering orderless org-roam splash-screen
-		   treemacs vertico)))
+		   treemacs treemacs-evil vertico)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
