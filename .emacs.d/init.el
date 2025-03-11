@@ -20,19 +20,6 @@
 (defvar toa/config-el  (expand-file-name "config.el" toa/emacs-dir))
 (defvar toa/config-elc (expand-file-name "config.elc" toa/emacs-dir))
 
-(defun toa/tangle-and-compile-config ()
-  "Tangle `config.org` to `config.el`, then byte-compile `config.el` if it changed."
-  (when (string-equal (buffer-file-name) toa/config-org)
-    (message "Tangling config.org to config.el...")
-    (org-babel-tangle)
-    (when (file-exists-p toa/config-el)
-      (message "Byte-compiling config.el...")
-      (byte-compile-file toa/config-el)
-      (message "Compilation complete!"))))
-
-;; Add hook to automatically tangle and compile on save
-(add-hook 'after-save-hook #'toa/tangle-and-compile-config)
-
 ;; Load the compiled config if available, otherwise tangle and load
 (if (file-exists-p toa/config-elc)
     (progn
@@ -41,6 +28,7 @@
   (progn
     (message "Loading and tangling config.org...")
     (org-babel-load-file toa/config-org)))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

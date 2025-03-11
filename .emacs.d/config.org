@@ -1,3 +1,32 @@
+#+TITLE: Emacs Configuration
+#+AUTHOR: Tunc Aydin
+#+PROPERTY header-args :tangle config.el
+
+* General Settings
+#+begin_src emacs-lisp :tangle config.el
+  ;; Load necessary built in packages
+  (require 'package)
+  (require 'project)
+  (require 'org)
+  (require 'ob-tangle)
+#+end_src
+
+* Auto-Tangle Byte-Compile config.el
+#+begin_src emacs-lisp :tangle config.el
+    (defun toa/tangle-and-compile-config ()
+    "Tangle `config.org` to `config.el`, then byte-compile `config.el` if it changed."
+    (when (string-equal (buffer-file-name) toa/config-org)
+      (message "Tangling config.org to config.el...")
+      (org-babel-tangle)
+      (when (file-exists-p toa/config-el)
+        (message "Byte-compiling config.el...")
+        (byte-compile-file toa/config-el)
+        (message "Compilation complete!"))))
+
+  ;; Add hook to automatically tangle and compile on save
+  (add-hook 'after-save-hook #'toa/tangle-and-compile-config)
+#+end_src
+
 * No Littering
 #+begin_src emacs-lisp :tangle config.el
   (setq emacs-litter-directory
@@ -45,6 +74,45 @@
   (use-package emacs
     :custom
     (tab-always-indent 'complete))
+#+end_src
+
+* Eglot
+#+begin_src emacs-lisp :tangle config.el
+  (use-package eglot
+    :ensure t
+    :hook (python-mode . eglot-ensure))
+
+  (defun toa/setup-completion ()
+    (setq-local completion-at-point-functions
+  	      (list #'eglot-completion-at-point)))
+ 
+  (add-hook 'eglot-managed-mode-hook 'toa/setup-completion) 
+#+end_src
+
+* Conda
+#+begin_src emacs-lisp :tangle config.el
+  (use-package conda
+    :ensure t
+    :init
+    (setq conda-anaconda-home (expand-file-name "~/miniconda3"))
+    (setq conda-env-home-directory (expand-file-name "~/miniconda3/envs/"))
+    :config
+    (conda-env-initialize-interactive-shells)
+    (conda-env-initialize-eshell)
+    (conda-env-autoactivate-mode t))  ;; Auto-activate Conda environments when opening files
+
+   (defun my/select-conda-env ()
+    "Prompt to activate a Conda environment if one isn't set in .dir-locals.el."
+    (interactive)
+    (unless conda-env-current-name
+      (let ((env (completing-read "Select Conda Environment: "
+                                  (conda-env-candidates))))
+        (conda-env-activate env))))
+
+  ;; Hook it into python-mode
+  (add-hook 'python-mode-hook #'my/select-conda-env)
+
+
 #+end_src
 
 * Smooth Scrolling
@@ -123,8 +191,33 @@
     :ensure t)
 
   (use-package doom-modeline
-    :ensure t)
-  (doom-modeline-mode t) 
+    :ensure t
+    :config
+
+    (doom-modeline-mode t) 
+    ;; Custom segment to show the Conda environment
+    (doom-modeline-def-segment conda-env
+      "Display the current Conda environment in the modeline."
+      (when (and (boundp 'conda-env-current-name) conda-env-current-name)
+        (format " [%s]" conda-env-current-name)))
+
+    ;; Add the Conda environment segment to an existing modeline layout
+    (doom-modeline-def-modeline 'my-python-line
+      '(bar workspace-name window-number modals matches buffer-info remote-host buffer-position parrot selection-info)
+      '(objed-state misc-info persp-name conda-env lsp minor-modes major-mode process vcs)) ;; checker))
+
+    ;; Apply the custom modeline only in Python mode
+    (add-hook 'python-mode-hook
+              (lambda () (doom-modeline-set-modeline 'my-python-line t))))
+
+  ;; Refresh Doom Modeline when Conda environment changes
+  (defun my/update-conda-env-modeline ()
+    "Update Doom Modeline when Conda environment changes."
+    (doom-modeline-set-modeline 'my-python-line t)
+    (force-mode-line-update t))
+
+  (add-hook 'conda-postactivate-hook #'my/update-conda-env-modeline)
+  (add-hook 'conda-postdeactivate-hook #'my/update-conda-env-modeline)
 
   (use-package dashboard
     :config
@@ -148,42 +241,5 @@
       (define-key winum-keymap (kbd "M-0") #'treemacs-select-window)))
   :config
   (setq treemacs-text-scale -1)
-#+end_src
-
-* Conda
-#+begin_src emacs-lisp :tangle config.el
-  (use-package conda
-    :ensure t
-    :init
-    (setq conda-anaconda-home (expand-file-name "~/miniconda3"))
-    (setq conda-env-home-directory (expand-file-name "~/miniconda3/envs/"))
-    :config
-    (conda-env-initialize-interactive-shells)
-    (conda-env-initialize-eshell)
-    (conda-env-autoactivate-mode t))  ;; Auto-activate Conda environments when opening files
-
-   (defun my/select-conda-env ()
-    "Prompt to activate a Conda environment if one isn't set in .dir-locals.el."
-    (interactive)
-    (unless conda-env-current-name
-      (let ((env (completing-read "Select Conda Environment: "
-                                  (conda-env-candidates))))
-        (conda-env-activate env))))
-
-  ;; Hook it into python-mode
-  (add-hook 'python-mode-hook #'my/select-conda-env)
-#+end_src
-
-* Eglot
-#+begin_src emacs-lisp :tangle config.el
-  (use-package eglot
-    :ensure t
-    :hook (python-mode . eglot-ensure))
-
-  (defun toa/setup-completion ()
-    (setq-local completion-at-point-functions
-  	      (list #'eglot-completion-at-point)))
- 
-  (add-hook 'eglot-managed-mode-hook 'toa/setup-completion)
 #+end_src
 
