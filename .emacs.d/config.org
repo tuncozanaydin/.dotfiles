@@ -225,22 +225,22 @@
         (format " [%s]" conda-env-current-name)))
 
     ;; Add the Conda environment segment to an existing modeline layout
-    (doom-modeline-def-modeline 'my-python-line
+    (doom-modeline-def-modeline 'toa/python-line
       '(bar workspace-name window-number modals matches buffer-info remote-host buffer-position parrot selection-info)
       '(objed-state misc-info persp-name conda-env lsp minor-modes major-mode process vcs)) ;; checker))
 
     ;; Apply the custom modeline only in Python mode
     (add-hook 'python-mode-hook
-              (lambda () (doom-modeline-set-modeline 'my-python-line t))))
+              (lambda () (doom-modeline-set-modeline 'toa/python-line t))))
 
   ;; Refresh Doom Modeline when Conda environment changes
-  (defun my/update-conda-env-modeline ()
+  (defun toa/update-conda-env-modeline ()
     "Update Doom Modeline when Conda environment changes."
-    (doom-modeline-set-modeline 'my-python-line t)
+    (doom-modeline-set-modeline 'toa/python-line t)
     (force-mode-line-update t))
 
-  (add-hook 'conda-postactivate-hook #'my/update-conda-env-modeline)
-  (add-hook 'conda-postdeactivate-hook #'my/update-conda-env-modeline)
+  (add-hook 'conda-postactivate-hook #'toa/update-conda-env-modeline)
+  (add-hook 'conda-postdeactivate-hook #'toa/update-conda-env-modeline)
 
   (use-package dashboard
     :config
