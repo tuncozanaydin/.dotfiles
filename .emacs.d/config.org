@@ -274,17 +274,42 @@
     (treemacs-resize-icons 11)
     :bind
     (("C-x t t" . treemacs)))  ;; Toggle Treemacs
-  ;;  (use-package treemacs
-  ;;    :ensure t)
-  ;;  (setq treemacs-text-scale -1)
 
   (use-package treemacs-evil
   :after (treemacs evil)
   :ensure t)
 
   (require 'treemacs-all-the-icons)
-  ;;(treemacs-load-all-the-icons-with-workaround-font "Hermit")
   (treemacs-load-theme "all-the-icons")
+#+end_src
 
+* Eshell
+#+begin_src emacs-lisp :tangle config.el
+  (defun toa/toggle-eshell-popup ()
+    "Toggle an Eshell popup at the bottom, move focus to it, and enter insert mode."
+    (interactive)
+    (let* ((buf (get-buffer-create "*eshell-popup*"))
+           (win (get-buffer-window buf)))
+      (if win
+          ;; Close Eshell only if it's not the last window
+          (unless (one-window-p)
+            (delete-window win))
+        ;; Open Eshell at the bottom, move focus, and enter insert mode
+        (progn
+          (unless (eq buf (window-buffer)) ;; Prevent reopening in same window
+            (with-current-buffer buf
+              (unless (eq major-mode 'eshell-mode)
+                (eshell-mode))))
+          (let ((eshell-window (display-buffer-in-side-window
+                                buf
+                                '((side . bottom)
+                                  (window-height . 0.3)))))
+            (select-window eshell-window)
+            (goto-char (point-max))  ;; Ensure cursor is at the bottom
+            (when (bound-and-true-p evil-mode)
+              (evil-insert-state)))))))  ;; Enter insert mode if Evil mode is enabled
+
+  ;; Keybinding to toggle Eshell popup
+  (global-set-key (kbd "C-c e") #'toa/toggle-eshell-popup)
 #+end_src
 
