@@ -329,3 +329,28 @@
   (global-set-key (kbd "C-c e") #'toa/toggle-eshell-popup)
 #+end_src
 
+* YAML
+#+begin_src emacs-lisp :tangle config.el
+  (use-package yaml-mode
+    :ensure t
+    :hook (yaml-mode . (lambda ()
+                         (setq-local indent-tabs-mode nil)  ;; Use spaces instead of tabs
+                         (setq-local tab-width 2))))  ;; YAML convention: 2-space indentation
+#+end_src
+
+
+* Python
+#+begin_src emacs-lisp :tangle config.el
+  (defun toa/setup-python-mode ()
+    "Configure Python mode settings."
+    (setq-local indent-tabs-mode nil)  ;; Use spaces instead of tabs
+    (setq-local tab-width 4)  ;; Set tab width to 4 spaces
+    (electric-indent-mode 1))  ;; Auto-indent new lines
+
+  (use-package python
+    :ensure nil  ;; Built-in package
+    :hook (python-mode . toa/setup-python-mode)
+    :custom
+    (python-indent-offset 4)  ;; Indent width of 4 spaces
+    (python-indent-guess-indent-offset-verbose nil))  ;; Disable guessing indent 
+#+end_src
