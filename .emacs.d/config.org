@@ -146,13 +146,29 @@
 * Fonts
 #+begin_src emacs-lisp :tangle config.el
   (set-face-attribute 'default nil
-		      :family "Codelia Ligatures"
-		      :height 120
-		      :weight 'regular)
+  		      :family "Codelia Ligatures"
+  		      :height 120
+  		      :weight 'regular)
+
+  (when (fboundp 'set-fontset-font)
+    (set-fontset-font t 'symbol (font-spec :family "Fira Code") nil 'prepend))
+
+  (when (fboundp 'mac-auto-operator-composition-mode)  ;; macOS-specific ligatures
+    (mac-auto-operator-composition-mode))
+
   (use-package ligature
     :ensure t
-    :config (ligature-set-ligatures 't '(">=")))
-  (global-ligature-mode t)
+    :config
+    (ligature-set-ligatures 't '("www" "**" "***" "**/" "*>" "*/" 
+                                 "||" "||=" "|=" "|>" "::" ":::" 
+                                 "==" "===" "!=" "!==" "=!=" 
+                                 "=>" ">>" ">>=" ">>>" "<<<" 
+                                 "<=" ">=" "<=>" "<=" "<|" "<||" 
+                                 "<|>" "<:" "<>" "<-<" "<<-" 
+                                 "<<=" "<->" "->" "->>" "-<" 
+                                 "-<<" "-=" "--" "-->" "~=" "~>"
+                                 "[|" "|]" "{|" "|}" "++" "+++"))
+    (global-ligature-mode t)) ;; Enable ligatures globally
 #+end_src
 
 * Theme
@@ -273,7 +289,7 @@
     (treemacs-text-scale -1)
     (treemacs-resize-icons 11)
     :bind
-    (("C-x t t" . treemacs)))  ;; Toggle Treemacs
+    (("C-c t t" . treemacs)))  ;; Toggle Treemacs
 
   (use-package treemacs-evil
   :after (treemacs evil)
