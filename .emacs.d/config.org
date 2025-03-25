@@ -43,6 +43,78 @@
     :ensure t)
 #+end_src
 
+* Frame resizing via keyboard
+#+begin_src emacs-lisp :tangle config.el
+  (defvar toa/original-frame-config nil
+    "Store original frame position and size for restoration.")
+
+  (defun toa/frame-monitor-geometry ()
+    "Get current monitor's geometry as (x y width height)."
+    (alist-get 'geometry (frame-monitor-attributes)))
+
+  (defun toa/frame-set-geometry (x y width height)
+    "Set frame position to X,Y and size to WIDTHxHEIGHT (in pixels)."
+    (set-frame-position nil x y)
+    (set-frame-size nil width height t))
+
+  (defun toa/frame-left-half ()
+    "Resize frame to left half of current monitor."
+    (interactive)
+    (setq toa/original-frame-config
+          (list (frame-parameter nil 'left)
+                (frame-parameter nil 'top)
+                (frame-pixel-width)
+                (frame-pixel-height)))
+    (let* ((geom (toa/frame-monitor-geometry))
+           (x (nth 0 geom))
+           (y (nth 1 geom))
+           (w (/ (nth 2 geom) 2))
+           (h (nth 3 geom)))
+      (toa/frame-set-geometry x y w h)))
+
+  (defun toa/frame-right-half ()
+    "Resize frame to right half of current monitor."
+    (interactive)
+    (setq toa/original-frame-config
+  	(list (frame-parameter nil 'left)
+  	      (frame-parameter nil 'top)
+  	      (frame-pixel-width)
+  	      (frame-pixel-height)))
+    (let* ((geom (toa/frame-monitor-geometry))
+  	 (x (nth 0 geom))
+  	 (y (nth 1 geom))
+  	 (w (/ (nth 2 geom) 2))
+  	 (h (nth 3 geom)))
+      (toa/frame-set-geometry (+ x w) y w h)))
+
+  (defun toa/frame-maximize ()
+    "Resize the frame to fill the current monitor."
+    (interactive)
+    (setq toa/original-frame-config
+          (list (frame-parameter nil 'left)
+                (frame-parameter nil 'top)
+                (frame-pixel-width)
+                (frame-pixel-height)))
+    (let* ((geom (toa/frame-monitor-geometry))
+           (x (nth 0 geom))
+           (y (nth 1 geom))
+           (w (nth 2 geom))
+           (h (nth 3 geom)))
+      (toa/frame-set-geometry x y w h)))
+
+
+  (defun toa/frame-restore ()
+    "Restore the frame to its original size and position."
+    (interactive)
+    (when toa/original-frame-config
+      (apply #'toa/frame-set-geometry toa/original-frame-config)))
+
+  (global-set-key (kbd "C-c f h") #'toa/frame-left-half)
+  (global-set-key (kbd "C-c f l") #'toa/frame-right-half)
+  (global-set-key (kbd "C-c f j") #'toa/frame-maximize)
+  (global-set-key (kbd "C-c f k") #'toa/frame-restore)
+#+end_src
+
 * Evil Mode
 #+begin_src emacs-lisp :tangle config.el
   (use-package evil
@@ -348,7 +420,7 @@
               (evil-insert-state)))))))  ;; Enter insert mode if Evil mode is enabled
 
   ;; Keybinding to toggle Eshell popup
-  (global-set-key (kbd "C-c e") #'toa/toggle-eshell-popup)
+  (global-set-key (kbd "C-c s s") #'toa/toggle-eshell-popup)
 #+end_src
 
 * YAML
