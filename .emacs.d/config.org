@@ -43,6 +43,57 @@
     :ensure t)
 #+end_src
 
+* Evil Mode
+#+begin_src emacs-lisp :tangle config.el
+  (use-package evil
+    :ensure t)
+  (evil-mode t)
+
+  (use-package evil-org
+    :ensure t
+    :after org
+    :hook (org-mode . (lambda () evil-org-mode))
+    :config
+    (require 'evil-org-agenda)
+    (evil-org-agenda-set-keys))
+  #+end_src
+
+* Which-key 
+#+begin_src emacs-lisp :tangle config.el
+  (use-package which-key
+    :ensure t)
+  (which-key-mode)
+#+end_src
+
+* Set up C-t as user prefix key
+#+begin_src emacs-lisp :tangle config.el
+  ;; Remove C-t from all relevant maps
+  (global-unset-key (kbd "C-t"))
+  (when (boundp 'xref--map)
+    (define-key xref--map (kbd "C-t") nil)) ;; older Emacs
+  (when (boundp 'xref-mode-map)
+    (define-key xref-mode-map (kbd "C-t") nil)) ;; newer Emacs
+
+  ;; Define your custom prefix map
+  (define-prefix-command 'toa/leader-map)
+
+  ;; Bind C-t globally
+  (global-set-key (kbd "C-t") 'toa/leader-map)
+
+  ;; Bind C-t relevant Evil states
+  (define-key evil-normal-state-map (kbd "C-t") 'toa/leader-map)
+  (define-key evil-visual-state-map (kbd "C-t") 'toa/leader-map)
+  (define-key evil-insert-state-map (kbd "C-t") 'toa/leader-map)
+
+  (defun toa/define-key-with-description (keymap key command description &optional full-key)
+    "Bind KEY to COMMAND in KEYMAP and register DESCRIPTION with which-key.
+  If FULL-KEY is provided, use it for which-key replacement instead of KEY."
+    (define-key keymap (kbd key) command)
+    (when description
+      (which-key-add-key-based-replacements
+        (or full-key key) description)))
+#+end_src
+
 * Frame resizing via keyboard
 #+begin_src emacs-lisp :tangle config.el
   (defvar toa/original-frame-config nil
@@ -76,15 +127,15 @@
     "Resize frame to right half of current monitor."
     (interactive)
     (setq toa/original-frame-config
-  	(list (frame-parameter nil 'left)
-  	      (frame-parameter nil 'top)
-  	      (frame-pixel-width)
-  	      (frame-pixel-height)))
+      	(list (frame-parameter nil 'left)
+      	      (frame-parameter nil 'top)
+      	      (frame-pixel-width)
+      	      (frame-pixel-height)))
     (let* ((geom (toa/frame-monitor-geometry))
-  	 (x (nth 0 geom))
-  	 (y (nth 1 geom))
-  	 (w (/ (nth 2 geom) 2))
-  	 (h (nth 3 geom)))
+      	 (x (nth 0 geom))
+      	 (y (nth 1 geom))
+      	 (w (/ (nth 2 geom) 2))
+      	 (h (nth 3 geom)))
       (toa/frame-set-geometry (+ x w) y w h)))
 
   (defun toa/frame-maximize ()
@@ -109,26 +160,14 @@
     (when toa/original-frame-config
       (apply #'toa/frame-set-geometry toa/original-frame-config)))
 
-  (global-set-key (kbd "C-c f h") #'toa/frame-left-half)
-  (global-set-key (kbd "C-c f l") #'toa/frame-right-half)
-  (global-set-key (kbd "C-c f j") #'toa/frame-maximize)
-  (global-set-key (kbd "C-c f k") #'toa/frame-restore)
+  ;; Setup key bindings
+  (define-prefix-command 'toa/leader-frame-map)
+  (toa/define-key-with-description toa/leader-map "f" 'toa/leader-frame-map "frame" "C-t f")
+  (toa/define-key-with-description toa/leader-frame-map "l" #'toa/frame-left-half "snap left" "C-t f l")
+  (toa/define-key-with-description toa/leader-frame-map "r" #'toa/frame-right-half "snap right" "C-t f r")
+  (toa/define-key-with-description toa/leader-frame-map "m" #'toa/frame-maximize "maximize" "C-t f m")
+  (toa/define-key-with-description toa/leader-frame-map "x" #'toa/frame-restore "reset" "C-t f x")
 #+end_src
-
-* Evil Mode
-#+begin_src emacs-lisp :tangle config.el
-  (use-package evil
-    :ensure t)
-  (evil-mode t)
-
-  (use-package evil-org
-    :ensure t
-    :after org
-    :hook (org-mode . (lambda () evil-org-mode))
-    :config
-    (require 'evil-org-agenda)
-    (evil-org-agenda-set-keys))
-  #+end_src
 
 * Vertico
 #+begin_src emacs-lisp :tangle config.el
@@ -190,18 +229,18 @@
                  "Pyright not found. Install it globally via npm? ")
             (let ((default-directory "~"))
               (shell-command "npm install -g pyright")
-              (message "✅ Pyright installed via npm.")))
+              (message "Pyright installed via npm.")))
         (when (and (executable-find "conda")
                    (y-or-n-p
                     "npm (Node.js) not found. Install nodejs via conda? "))
           (let ((default-directory "~"))
             (shell-command "conda install -y nodejs")
-            (message "✅ Node.js installed via conda.")
+            (message "Node.js installed via conda.")
             (when (executable-find "npm")
               (when (y-or-n-p
                      "Install pyright via npm now? ")
                 (shell-command "npm install -g pyright")
-                (message "✅ Pyright installed via npm."))))))))
+                (message "Pyright installed via npm."))))))))
 
   (add-hook 'python-mode-hook #'toa/ensure-pyright-installed)
 #+end_src
@@ -275,13 +314,6 @@
     :ensure t
     :config
     (solaire-global-mode 1))
-#+end_src
-
-* Which-key 
-#+begin_src emacs-lisp :tangle config.el
-  (use-package which-key
-    :ensure t)
-  (which-key-mode)
 #+end_src
 
 * Encryption
@@ -382,18 +414,20 @@
     (treemacs-user-mode-line-format " ")
     (treemacs-text-scale -1)
     (treemacs-resize-icons 11)
-    :bind
-    (("C-c t t" . treemacs)))  ;; Toggle Treemacs
+    :config
+    (define-prefix-command 'toa/leader-treemacs-map)
+    (toa/define-key-with-description toa/leader-map "t" 'toa/leader-treemacs-map "treemacs" "C-t t")
+    (toa/define-key-with-description toa/leader-treemacs-map "t" #'treemacs "toggle" "C-t t t")) 
 
   (use-package treemacs-evil
-  :after (treemacs evil)
-  :ensure t)
+    :after (treemacs evil)
+    :ensure t)
 
   (require 'treemacs-all-the-icons)
   (treemacs-load-theme "all-the-icons")
 #+end_src
 
-* Eshell
+* Shell
 #+begin_src emacs-lisp :tangle config.el
   (defun toa/toggle-eshell-popup ()
     "Toggle an Eshell popup at the bottom, move focus to it, and enter insert mode."
@@ -419,8 +453,10 @@
             (when (bound-and-true-p evil-mode)
               (evil-insert-state)))))))  ;; Enter insert mode if Evil mode is enabled
 
-  ;; Keybinding to toggle Eshell popup
-  (global-set-key (kbd "C-c s s") #'toa/toggle-eshell-popup)
+  ;; Setup keybindings
+  (define-prefix-command 'toa/leader-shell-map)
+  (toa/define-key-with-description toa/leader-map "s" 'toa/leader-shell-map "shell" "C-t s")
+  (toa/define-key-with-description toa/leader-shell-map "s" #'toa/toggle-eshell-popup "eshell popup" "C-t s s")
 #+end_src
 
 * YAML
@@ -448,3 +484,5 @@
     (python-indent-offset 4)  ;; Indent width of 4 spaces
     (python-indent-guess-indent-offset-verbose nil))  ;; Disable guessing indent 
 #+end_src
+
+
