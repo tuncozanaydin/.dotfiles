@@ -107,9 +107,31 @@
 
   (defun toa/setup-completion ()
     (setq-local completion-at-point-functions
-  	      (list #'eglot-completion-at-point)))
+    	      (list #'eglot-completion-at-point)))
 
   (add-hook 'eglot-managed-mode-hook 'toa/setup-completion) 
+  (defun toa/ensure-pyright-installed ()
+    "Ensure pyright is installed. Offer to install pyright or node via conda."
+    (unless (executable-find "pyright")
+      (if (executable-find "npm")
+          (when (y-or-n-p
+                 "Pyright not found. Install it globally via npm? ")
+            (let ((default-directory "~"))
+              (shell-command "npm install -g pyright")
+              (message "✅ Pyright installed via npm.")))
+        (when (and (executable-find "conda")
+                   (y-or-n-p
+                    "npm (Node.js) not found. Install nodejs via conda? "))
+          (let ((default-directory "~"))
+            (shell-command "conda install -y nodejs")
+            (message "✅ Node.js installed via conda.")
+            (when (executable-find "npm")
+              (when (y-or-n-p
+                     "Install pyright via npm now? ")
+                (shell-command "npm install -g pyright")
+                (message "✅ Pyright installed via npm."))))))))
+
+  (add-hook 'python-mode-hook #'toa/ensure-pyright-installed)
 #+end_src
 
 * Conda
