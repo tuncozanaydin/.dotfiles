@@ -43,6 +43,15 @@
     :ensure t)
 #+end_src
 
+* MacOS
+#+begin_src emacs-lisp :tangle config.el
+(when (eq system-type 'darwin)
+  (setq mac-command-modifier 'control)  ;; ⌘ = Control
+  (setq mac-option-modifier 'meta)      ;; ⌥ = Meta
+  (setq mac-control-modifier 'control))  ;; ^ stays Control 
+#+end_src
+
+
 * Evil Mode
 #+begin_src emacs-lisp :tangle config.el
   (use-package evil
