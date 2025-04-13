@@ -48,14 +48,16 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(all-the-icons conda corfu corfu-terminal dashboard doom-modeline
-		   doom-themes esup evil-org ligature marginalia
-		   no-littering orderless org-roam solaire-mode
-		   splash-screen treemacs treemacs-evil vertico
-		   yaml-mode)))
+   '(conda corfu dashboard doom-modeline doom-themes evil-org focus
+	   ligature marginalia no-littering orderless solaire-mode
+	   treemacs-all-the-icons treemacs-evil vertico yaml-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(font-lock-builtin-face ((t (:slant italic))))
+ '(font-lock-comment-face ((t (:slant italic))))
+ '(font-lock-doc-face ((t (:slant italic))))
+ '(font-lock-keyword-face ((t (:slant italic))))
+ '(font-lock-type-face ((t (:slant italic)))))
