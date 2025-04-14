@@ -83,7 +83,7 @@
   (when (boundp 'xref-mode-map)
     (define-key xref-mode-map (kbd "C-t") nil)) ;; newer Emacs
 
-  ;; Define your custom prefix map
+  ;; Define custom prefix map
   (define-prefix-command 'toa/leader-map)
 
   ;; Bind C-t globally
@@ -256,28 +256,27 @@
 
 * Conda
 #+begin_src emacs-lisp :tangle config.el
-  (use-package conda
-    :ensure t
-    :init
-    (setq conda-anaconda-home (expand-file-name "~/miniconda3"))
-    (setq conda-env-home-directory (expand-file-name "~/miniconda3/envs/"))
-    :config
-    (conda-env-initialize-interactive-shells)
-    (conda-env-initialize-eshell)
-    (conda-env-autoactivate-mode t))  ;; Auto-activate Conda environments when opening files
+    (use-package conda
+      :ensure t
+      :init
+      (setq conda-anaconda-home (expand-file-name "~/miniconda3"))
+      (setq conda-env-home-directory (expand-file-name "~/miniconda3/envs/"))
+      :config
+      (conda-env-initialize-interactive-shells)
+      (conda-env-initialize-eshell)
+      (setq conda-env-default-name nil)
+      (conda-env-autoactivate-mode nil))  ;; Don't Auto-activate Conda environments when opening files
 
-   (defun toa/select-conda-env ()
-    "Prompt to activate a Conda environment if one isn't set in .dir-locals.el."
-    (interactive)
-    (unless conda-env-current-name
-      (let ((env (completing-read "Select Conda Environment: "
-                                  (conda-env-candidates))))
-        (conda-env-activate env))))
+    (defun toa/select-conda-env ()
+      "Prompt to activate a Conda environment if one isn't set in .dir-locals.el."
+      (interactive)
+      (unless conda-env-current-name
+        (let ((env (completing-read "Select Conda Environment: "
+                                    (conda-env-candidates))))
+          (conda-env-activate env))))
 
-  ;; Hook it into python-mode
-  (add-hook 'python-mode-hook #'toa/select-conda-env)
-
-
+    ;; Hook it into python-mode
+    (add-hook 'python-mode-hook #'toa/select-conda-env)
 #+end_src
 
 * Smooth Scrolling
@@ -365,6 +364,8 @@
 
   ;; Make comments italic
   (set-face-attribute 'font-lock-comment-face nil :slant 'italic)
+  (set-face-attribute 'font-lock-doc-face nil :slant 'italic)
+
 
   (use-package all-the-icons
     :ensure t)
@@ -494,4 +495,9 @@
     (python-indent-guess-indent-offset-verbose nil))  ;; Disable guessing indent 
 #+end_src
 
-
+* Markdown
+#+begin_src emacs-lisp :tangle config.el
+  (use-package markdown-mode
+    :init
+    (setq markdown-command "pandoc"))
+#+end_src
