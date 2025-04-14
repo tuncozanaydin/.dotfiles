@@ -287,12 +287,36 @@
 * Fonts
 #+begin_src emacs-lisp :tangle config.el
   (set-face-attribute 'default nil
-  		      :family "Codelia Ligatures"
-  		      :height 120
-  		      :weight 'regular)
+		    :family "Codelia Ligatures"
+		    :height 130)
 
-  (when (fboundp 'set-fontset-font)
-    (set-fontset-font t 'symbol (font-spec :family "Fira Code") nil 'prepend))
+  (custom-set-faces
+   '(font-lock-keyword-face ((t (:slant italic))))
+   '(font-lock-comment-face ((t (:slant italic))))
+
+   ;; Optional extras
+   '(font-lock-doc-face ((t (:slant italic))))           ;; docstrings
+   '(font-lock-builtin-face ((t (:slant italic))))       ;; like `print`, `len`, etc.
+   '(font-lock-type-face ((t (:slant italic))))          ;; types like `int`, `str`
+   )
+
+  (setq-default line-spacing 0.15) ;; float = adds proportional space
+  ;; or (setq-default line-spacing 2) ;; integer = fixed extra pixels
+
+  (setq doom-modeline-height 30) ;; default is 25, makes it a bit chunkier
+
+  (set-fringe-mode 12) ;; default is 8 — makes the sides slightly wider
+
+  (setq-default left-margin-width 2
+                right-margin-width 2)
+
+  (defun my-enable-window-padding ()
+    (set-window-buffer nil (current-buffer))) 
+
+  (add-hook 'window-configuration-change-hook #'my-enable-window-padding)
+
+  ;;(when (fboundp 'set-fontset-font)
+  ;; (set-fontset-font t 'symbol (font-spec :family "Cascadia Code") nil 'prepend))
 
   (when (fboundp 'mac-auto-operator-composition-mode)  ;; macOS-specific ligatures
     (mac-auto-operator-composition-mode))
@@ -334,6 +358,11 @@
 
 * Org mode
 #+begin_src emacs-lisp :tangle config.el
+  ;; Disable electric indent in Emacs Lisp
+  (add-hook 'emacs-lisp-mode-hook (lambda () (electric-indent-local-mode -1)))
+
+  ;; Optionally: also disable in org-mode src blocks
+  (add-hook 'org-mode-hook (lambda () (electric-indent-local-mode -1)))
 #+end_src
 
 * Org-roam
@@ -361,11 +390,6 @@
   (set-fringe-mode 10)
 
   (setq visible-bell t)
-
-  ;; Make comments italic
-  (set-face-attribute 'font-lock-comment-face nil :slant 'italic)
-  (set-face-attribute 'font-lock-doc-face nil :slant 'italic)
-
 
   (use-package all-the-icons
     :ensure t)
