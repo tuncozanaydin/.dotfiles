@@ -285,9 +285,32 @@ Emacs: #+TITLE Configuration
 
 * Fonts
 #+begin_src emacs-lisp :tangle config.el
-  (set-face-attribute 'default nil
-      		    :family "MonoLisa toa"
-      		    :height 120)
+  (defun toa/wsl-p ()
+    "Return non-nil if running under WSL (v1 or v2)."
+    (and (eq system-type 'gnu/linux)
+         (with-temp-buffer
+           (ignore-errors
+             (insert-file-contents "/proc/version"))
+           (goto-char (point-min))
+           (re-search-forward "Microsoft" nil t))))
+
+  (defun toa/set-font-based-on-system ()
+    "Set MonoLisa font size based on OS and WSL detection."
+    (cond
+     ((toa/wsl-p)
+      (set-face-attribute 'default nil :family "MonoLisa toa" :height 140))
+     ((eq system-type 'windows-nt)
+      (set-face-attribute 'default nil :family "MonoLisa toa" :height 120))
+     ((eq system-type 'darwin)
+      (set-face-attribute 'default nil :family "MonoLisa toa" :height 160))
+     ((eq system-type 'gnu/linux)
+      (set-face-attribute 'default nil :family "MonoLisa toa" :height 140))
+     (t
+      (set-face-attribute 'default nil :family "MonoLisa toa" :height 140))))
+
+  ;; Only apply in GUI mode
+  (when (display-graphic-p)
+    (toa/set-font-based-on-system))
   (custom-set-faces
    ;; Programming keywords and syntax — use regular italic
    '(font-lock-keyword-face      ((t (:family "MonoLisa toa" :slant italic :weight bold))))

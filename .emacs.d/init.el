@@ -41,4 +41,3 @@
             (setq gc-cons-threshold (* 10 1024 1024)) ;; 10MB
             (setq gc-cons-percentage 0.1)))
 ;;            (message "GC restored to normal settings")))
-
