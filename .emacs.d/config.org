@@ -290,7 +290,7 @@ Emacs: #+TITLE Configuration
       		    :height 120)
   (custom-set-faces
    ;; Programming keywords and syntax — use regular italic
-   '(font-lock-keyword-face      ((t (:family "MonoLisa toa" :slant italic))))
+   '(font-lock-keyword-face      ((t (:family "MonoLisa toa" :slant italic :weight bold))))
    '(font-lock-builtin-face      ((t (:family "MonoLisa toa" :slant italic))))
    '(font-lock-type-face         ((t (:family "MonoLisa toa" :slant italic))))
 
@@ -334,8 +334,11 @@ Emacs: #+TITLE Configuration
 * Theme
 #+begin_src emacs-lisp :tangle config.el
     (use-package doom-themes
-      :ensure t)
-    (load-theme 'doom-moonlight t)
+      :ensure t
+      :config
+      (load-theme 'doom-moonlight t)
+      (doom-themes-visual-bell-config)
+      (doom-themes-org-config))
 
     (use-package solaire-mode
       :ensure t
