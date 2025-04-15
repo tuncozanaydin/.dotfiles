@@ -1,4 +1,4 @@
-#+TITLE: Emacs Configuration 
+Emacs: #+TITLE Configuration 
 #+AUTHOR: Tunc Aydin
 
 * General Settings
@@ -6,7 +6,7 @@
   ;; -*- lexical-binding: t; -*-
   ;; Load necessary built in packages
   ;;(require 'project)
-  ;;(require 'org)
+  ;;(require 'org) 
   ;;(require 'ob-tangle)
   (require 'eglot)
 #+end_src
@@ -50,7 +50,6 @@
   (setq mac-option-modifier 'meta)      ;; ⌥ = Meta
   (setq mac-control-modifier 'control))  ;; ^ stays Control 
 #+end_src
-
 
 * Evil Mode
 #+begin_src emacs-lisp :tangle config.el
@@ -243,7 +242,7 @@
                    (y-or-n-p
                     "npm (Node.js) not found. Install nodejs via conda? "))
           (let ((default-directory "~"))
-            (shell-command "conda install -y nodejs")
+            (shell-command "conda install -y conda-forge::nodejs")
             (message "Node.js installed via conda.")
             (when (executable-find "npm")
               (when (y-or-n-p
@@ -287,21 +286,20 @@
 * Fonts
 #+begin_src emacs-lisp :tangle config.el
   (set-face-attribute 'default nil
-		    :family "Codelia Ligatures"
-		    :height 130)
-
+      		    :family "MonoLisa toa"
+      		    :height 120)
   (custom-set-faces
-   '(font-lock-keyword-face ((t (:slant italic))))
-   '(font-lock-comment-face ((t (:slant italic))))
+   ;; Programming keywords and syntax — use regular italic
+   '(font-lock-keyword-face      ((t (:family "MonoLisa toa" :slant italic))))
+   '(font-lock-builtin-face      ((t (:family "MonoLisa toa" :slant italic))))
+   '(font-lock-type-face         ((t (:family "MonoLisa toa" :slant italic))))
 
-   ;; Optional extras
-   '(font-lock-doc-face ((t (:slant italic))))           ;; docstrings
-   '(font-lock-builtin-face ((t (:slant italic))))       ;; like `print`, `len`, etc.
-   '(font-lock-type-face ((t (:slant italic))))          ;; types like `int`, `str`
+   ;; Comments and docstrings — use cursive/script italic
+   '(font-lock-comment-face      ((t (:family "MonoLisa toa script" :slant normal))))
+   '(font-lock-doc-face          ((t (:family "MonoLisa toa script" :slant normal))))
    )
 
-  (setq-default line-spacing 0.15) ;; float = adds proportional space
-  ;; or (setq-default line-spacing 2) ;; integer = fixed extra pixels
+  ;;(setq-default line-spacing 1) ;; integer = fixed extra pixels
 
   (setq doom-modeline-height 30) ;; default is 25, makes it a bit chunkier
 
@@ -314,9 +312,6 @@
     (set-window-buffer nil (current-buffer))) 
 
   (add-hook 'window-configuration-change-hook #'my-enable-window-padding)
-
-  ;;(when (fboundp 'set-fontset-font)
-  ;; (set-fontset-font t 'symbol (font-spec :family "Cascadia Code") nil 'prepend))
 
   (when (fboundp 'mac-auto-operator-composition-mode)  ;; macOS-specific ligatures
     (mac-auto-operator-composition-mode))
@@ -338,14 +333,14 @@
 
 * Theme
 #+begin_src emacs-lisp :tangle config.el
-  (use-package doom-themes
-    :ensure t)
-  (load-theme 'doom-moonlight t)
+    (use-package doom-themes
+      :ensure t)
+    (load-theme 'doom-moonlight t)
 
-  (use-package solaire-mode
-    :ensure t
-    :config
-    (solaire-global-mode 1))
+    (use-package solaire-mode
+      :ensure t
+      :config
+      (solaire-global-mode 1))
 #+end_src
 
 * Encryption
