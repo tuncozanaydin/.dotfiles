@@ -1,5 +1,5 @@
 Emacs: #+TITLE Configuration 
-#+AUTHOR: Tunc Aydin
+#+AUTHOR: Tunç O. Aydın
 
 * General Settings
 #+begin_src emacs-lisp :tangle config.el
@@ -54,8 +54,12 @@ Emacs: #+TITLE Configuration
 * Evil Mode
 #+begin_src emacs-lisp :tangle config.el
   (use-package evil
-    :ensure t)
-  (evil-mode t)
+    :ensure t
+    :init
+    (setq evil-undo-system 'undo-redo)
+    :config
+    (evil-mode t)
+    (define-key evil-normal-state-map (kbd "U") 'evil-redo))
 
   (use-package evil-org
     :ensure t
@@ -64,7 +68,7 @@ Emacs: #+TITLE Configuration
     :config
     (require 'evil-org-agenda)
     (evil-org-agenda-set-keys))
-  #+end_src
+#+end_src
 
 * Which-key 
 #+begin_src emacs-lisp :tangle config.el
@@ -108,8 +112,18 @@ Emacs: #+TITLE Configuration
     "Store original frame position and size for restoration.")
 
   (defun toa/frame-monitor-geometry ()
-    "Get current monitor's geometry as (x y width height)."
-    (alist-get 'geometry (frame-monitor-attributes)))
+    "Get monitor workarea (or geometry) and adjust for WSL2 manually."
+    (let* ((geom (or (alist-get 'workarea (frame-monitor-attributes))
+		     (alist-get 'geometry (frame-monitor-attributes))))
+	   (x (nth 0 geom))
+	   (y (nth 1 geom))
+	   (w (nth 2 geom))
+	   (h (nth 3 geom)))
+      (if (toa/wsl-p)
+	  ;; Assume Windows taskbar height ~80px 
+	  (list x y w (- h 80))
+	(list x y w h))))
+
 
   (defun toa/frame-set-geometry (x y width height)
     "Set frame position to X,Y and size to WIDTHxHEIGHT (in pixels)."
@@ -135,15 +149,15 @@ Emacs: #+TITLE Configuration
     "Resize frame to right half of current monitor."
     (interactive)
     (setq toa/original-frame-config
-      	(list (frame-parameter nil 'left)
-      	      (frame-parameter nil 'top)
-      	      (frame-pixel-width)
-      	      (frame-pixel-height)))
+          (list (frame-parameter nil 'left)
+                (frame-parameter nil 'top)
+                (frame-pixel-width)
+                (frame-pixel-height)))
     (let* ((geom (toa/frame-monitor-geometry))
-      	 (x (nth 0 geom))
-      	 (y (nth 1 geom))
-      	 (w (/ (nth 2 geom) 2))
-      	 (h (nth 3 geom)))
+           (x (nth 0 geom))
+           (y (nth 1 geom))
+           (w (/ (nth 2 geom) 2))
+           (h (nth 3 geom)))
       (toa/frame-set-geometry (+ x w) y w h)))
 
   (defun toa/frame-maximize ()
@@ -478,8 +492,11 @@ Emacs: #+TITLE Configuration
     :after (treemacs evil)
     :ensure t)
 
-  (require 'treemacs-all-the-icons)
-  (treemacs-load-theme "all-the-icons")
+  (use-package treemacs-all-the-icons
+    :after treemacs
+    :ensure t
+    :config
+    (treemacs-load-theme "all-the-icons"))
 #+end_src
 
 * Shell
