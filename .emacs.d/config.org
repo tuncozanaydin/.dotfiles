@@ -316,7 +316,7 @@ Emacs: #+TITLE Configuration
      ((eq system-type 'windows-nt)
       (set-face-attribute 'default nil :family "MonoLisa toa" :height 120))
      ((eq system-type 'darwin)
-      (set-face-attribute 'default nil :family "MonoLisa toa" :height 160))
+      (set-face-attribute 'default nil :family "MonoLisa toa" :height 140))
      ((eq system-type 'gnu/linux)
       (set-face-attribute 'default nil :family "MonoLisa toa" :height 140))
      (t
