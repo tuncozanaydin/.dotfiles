@@ -232,6 +232,52 @@ Emacs: #+TITLE Configuration
     (tab-always-indent 'complete))
 #+end_src
 
+* Ranger 
+#+begin_src emacs-lisp :tangle config.el
+      (use-package ranger
+        :ensure t
+        :commands (ranger deer)
+        :init
+        ;; Keep it lightweight and familiar
+        (setq ranger-show-hidden t              ;; show dotfiles
+              ranger-preview-file t             ;; enable live preview
+              ranger-show-preview t             ;; ensure preview window is shown
+              ranger-max-preview-size 50        ;; MB; preview larger images
+              ranger-dont-show-binary nil       ;; preview binary files
+  	    ranger-show-literal nil
+  	    ranger-cleanup-eagerly t
+  	    ranger-cleanup-on-disable t
+              ranger-modify-header t)
+        ;; If you want Ranger to replace Dired everywhere, toggle this on:
+        ;; (setq ranger-override-dired t)
+        )
+
+      ;; Leader: C-t r …
+      (define-prefix-command 'toa/leader-ranger-map)
+      (toa/define-key-with-description toa/leader-map "r" 'toa/leader-ranger-map "ranger" "C-t r")
+      (toa/define-key-with-description toa/leader-ranger-map "r" #'ranger "open ranger" "C-t r r")
+      (toa/define-key-with-description toa/leader-ranger-map "d" #'deer "open deer (lite)" "C-t r d")
+      (toa/define-key-with-description toa/leader-ranger-map "q" #'ranger-close "quit ranger" "C-t r q")
+
+      ;; Optional: quick toggle to make Ranger replace Dired on the fly.
+      (defun toa/ranger-override-dired-toggle ()
+        (interactive)
+        (setq ranger-override-dired (not ranger-override-dired))
+        (message "ranger-override-dired: %s" ranger-override-dired))
+      (toa/define-key-with-description toa/leader-ranger-map "o"
+                                       #'toa/ranger-override-dired-toggle
+    				   "toggle override" "C-t r o")
+
+  ;; Make the highlighted row in Ranger stand out (buffer-local remap)
+  (with-eval-after-load 'ranger
+    (defun toa/ranger-boost-hl-line ()
+      (hl-line-mode 1)
+      ;; Remap only in this buffer; doesn't affect other modes
+      (face-remap-add-relative 'hl-line '(:background "#44475a" :extend t)))
+    (add-hook 'ranger-mode-hook #'toa/ranger-boost-hl-line))
+
+#+end_src
+
 * Eglot
 #+begin_src emacs-lisp :tangle config.el
   (use-package eglot
@@ -398,6 +444,12 @@ Emacs: #+TITLE Configuration
 
   ;; Optionally: also disable in org-mode src blocks
   (add-hook 'org-mode-hook (lambda () (electric-indent-local-mode -1)))
+
+  ;; Reclaim TAB in normal mode for cycling visibility 
+  (with-eval-after-load 'evil-org
+    (evil-define-key 'normal org-mode-map (kbd "TAB") #'org-cycle)
+    (evil-define-key 'normal org-mode-map (kbd "<tab>") #'org-cycle))
+
 #+end_src
 
 * Org-roam
