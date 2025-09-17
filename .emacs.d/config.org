@@ -302,7 +302,7 @@ Emacs: #+TITLE Configuration
                    (y-or-n-p
                     "npm (Node.js) not found. Install nodejs via conda? "))
           (let ((default-directory "~"))
-            (shell-command "conda install -y conda-forge::nodejs")
+            (shell-command "conda install -y conda-forge::nodejs=22")
             (message "Node.js installed via conda.")
             (when (executable-find "npm")
               (when (y-or-n-p
