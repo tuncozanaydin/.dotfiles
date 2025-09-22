@@ -267,15 +267,6 @@ Emacs: #+TITLE Configuration
       (toa/define-key-with-description toa/leader-ranger-map "o"
                                        #'toa/ranger-override-dired-toggle
     				   "toggle override" "C-t r o")
-
-  ;; Make the highlighted row in Ranger stand out (buffer-local remap)
-  (with-eval-after-load 'ranger
-    (defun toa/ranger-boost-hl-line ()
-      (hl-line-mode 1)
-      ;; Remap only in this buffer; doesn't affect other modes
-      (face-remap-add-relative 'hl-line '(:background "#44475a" :extend t)))
-    (add-hook 'ranger-mode-hook #'toa/ranger-boost-hl-line))
-
 #+end_src
 
 * Eglot
@@ -416,17 +407,33 @@ Emacs: #+TITLE Configuration
 
 * Theme
 #+begin_src emacs-lisp :tangle config.el
-    (use-package doom-themes
-      :ensure t
-      :config
-      (load-theme 'doom-moonlight t)
-      (doom-themes-visual-bell-config)
-      (doom-themes-org-config))
+    (setq modus-themes-common-palette-overrides
+    '(
+    ;; Subtle fringes (the side gutters)
+    (fringe bg-dim)
 
-    (use-package solaire-mode
-      :ensure t
-      :config
-      (solaire-global-mode 1))
+    ;; Region (selection) variants: pick one set and comment the others
+    ;; a. gentle gray bg + blue-ish text
+    ;; (bg-region bg-dim) (fg-region blue-cooler)
+    ;; b. OR: keep text color, just change bg
+    ;; (bg-region bg-ochre) (fg-region unspecified)
+    (bg-region bg-lavender) (fg-region blue-cooler)
+
+    ;; Window split lines / borders done elsewhere; keeping theme tidy
+    ;; Links: faint underlines instead of bright ones
+    (underline-link border) (underline-link-visited border) (underline-link-symbolic border)
+
+    ;; Mode line: subtle background + matching border (appears borderless)
+    (bg-mode-line-active bg-blue-subtle)
+    (fg-mode-line-active fg-main)
+    (border-mode-line-active bg-mode-line-active))) 
+
+    (load-theme 'modus-vivendi-tinted t)
+
+  ;;(use-package solaire-mode
+   ;;   :ensure t
+    ;;  :config) 
+      ;;(solaire-global-mode 1))
 #+end_src
 
 * Encryption

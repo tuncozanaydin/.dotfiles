@@ -41,3 +41,26 @@
             (setq gc-cons-threshold (* 10 1024 1024)) ;; 10MB
             (setq gc-cons-percentage 0.1)))
 ;;            (message "GC restored to normal settings")))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(all-the-icons-nerd-fonts conda corfu dashboard doom-modeline
+			      doom-themes eglot evil-collection
+			      evil-org ligature marginalia
+			      markdown-mode modus-theme modus-themes
+			      no-littering orderless ranger
+			      solaire-mode treemacs-all-the-icons
+			      treemacs-evil vertico yaml-mode)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(font-lock-builtin-face ((t (:family "MonoLisa toa" :slant italic))))
+ '(font-lock-comment-face ((t (:family "MonoLisa toa script" :slant normal))))
+ '(font-lock-doc-face ((t (:family "MonoLisa toa script" :slant normal))))
+ '(font-lock-keyword-face ((t (:family "MonoLisa toa" :slant italic :weight bold))))
+ '(font-lock-type-face ((t (:family "MonoLisa toa" :slant italic)))))
