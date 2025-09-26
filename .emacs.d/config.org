@@ -232,6 +232,14 @@ Emacs: #+TITLE Configuration
     (tab-always-indent 'complete))
 #+end_src
 
+* Project.el
+#+begin_src emacs-lisp :tangle config.el
+  (with-eval-after-load 'project
+    ;; Recursively register all subdirs in ~/work as projects
+    (project-remember-projects-under "~/work"))
+
+#+end_src
+
 * Ranger 
 #+begin_src emacs-lisp :tangle config.el
       (use-package ranger
@@ -375,9 +383,9 @@ Emacs: #+TITLE Configuration
 
   ;;(setq-default line-spacing 1) ;; integer = fixed extra pixels
 
-  (setq doom-modeline-height 30) ;; default is 25, makes it a bit chunkier
+  ;;(setq doom-modeline-height 30) ;; default is 25, makes it a bit chunkier
 
-  (set-fringe-mode 12) ;; default is 8 — makes the sides slightly wider
+  (set-fringe-mode 6) ;; default is 8 
 
   (setq-default left-margin-width 2
                 right-margin-width 2)
@@ -409,8 +417,8 @@ Emacs: #+TITLE Configuration
 #+begin_src emacs-lisp :tangle config.el
     (setq modus-themes-common-palette-overrides
     '(
-    ;; Subtle fringes (the side gutters)
-    (fringe bg-dim)
+    ;; Remove fringes (the side gutters)
+    (fringe bg-main)
 
     ;; Region (selection) variants: pick one set and comment the others
     ;; a. gentle gray bg + blue-ish text
