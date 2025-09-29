@@ -483,58 +483,133 @@ Emacs: #+TITLE Configuration
 
 * Emacs GUI
 #+begin_src emacs-lisp :tangle config.el
-  (menu-bar-mode -1)
-  (tool-bar-mode -1)
-  (tooltip-mode -1)
-  (scroll-bar-mode -1)
-  (column-number-mode)
-  (size-indication-mode)
-  (set-fringe-mode 10)
+          (menu-bar-mode -1)
+          (tool-bar-mode -1)
+          (tooltip-mode -1)
+          (scroll-bar-mode -1)
+          (column-number-mode)
+          (size-indication-mode)
+          (set-fringe-mode 10)
 
-  (setq visible-bell t)
+          (setq visible-bell t)
 
-  (use-package all-the-icons
-    :ensure t)
+          (use-package all-the-icons
+            :ensure t)
 
-  (use-package doom-modeline
-    :ensure t
-    :config
+          (use-package doom-modeline
+            :ensure t
+            :config
 
-    (doom-modeline-mode t) 
-    ;; Custom segment to show the Conda environment
-    (doom-modeline-def-segment conda-env
-      "Display the current Conda environment in the modeline."
-      (when (and (boundp 'conda-env-current-name) conda-env-current-name)
-        (format " [%s]" conda-env-current-name)))
+            (doom-modeline-mode t) 
+            ;; Custom segment to show the Conda environment
+            (doom-modeline-def-segment conda-env
+              "Display the current Conda environment in the modeline."
+              (when (and (boundp 'conda-env-current-name) conda-env-current-name)
+                (format " [%s]" conda-env-current-name)))
 
-    ;; Add the Conda environment segment to an existing modeline layout
-    (doom-modeline-def-modeline 'toa/python-line
-      '(bar workspace-name window-number modals matches buffer-info remote-host buffer-position parrot selection-info)
-      '(objed-state misc-info persp-name conda-env lsp minor-modes major-mode process vcs)) ;; checker))
+            ;; Add the Conda environment segment to an existing modeline layout
+            (doom-modeline-def-modeline 'toa/python-line
+              '(bar workspace-name window-number modals matches buffer-info remote-host buffer-position parrot selection-info)
+              '(objed-state misc-info persp-name conda-env lsp minor-modes major-mode process vcs)) ;; checker))
 
-    ;; Apply the custom modeline only in Python mode
-    (add-hook 'python-mode-hook
-              (lambda () (doom-modeline-set-modeline 'toa/python-line t))))
+            ;; Apply the custom modeline only in Python mode
+            (add-hook 'python-mode-hook
+                      (lambda () (doom-modeline-set-modeline 'toa/python-line t))))
 
-  ;; Refresh Doom Modeline when Conda environment changes
-  (defun toa/update-conda-env-modeline ()
-    "Update Doom Modeline when Conda environment changes."
-    (doom-modeline-set-modeline 'toa/python-line t)
-    (force-mode-line-update t))
+          ;; Refresh Doom Modeline when Conda environment changes
+          (defun toa/update-conda-env-modeline ()
+            "Update Doom Modeline when Conda environment changes."
+            (doom-modeline-set-modeline 'toa/python-line t)
+            (force-mode-line-update t))
 
-  (add-hook 'conda-postactivate-hook #'toa/update-conda-env-modeline)
-  (add-hook 'conda-postdeactivate-hook #'toa/update-conda-env-modeline)
+          (add-hook 'conda-postactivate-hook #'toa/update-conda-env-modeline)
+          (add-hook 'conda-postdeactivate-hook #'toa/update-conda-env-modeline)
+        
+    ;; --- Splash with SVG on top -------------------------------------------------
+    (defvar toa/splash-text "Ξ  M  Λ  C  S")
+    (defvar toa/splash-svg-path "~/.emacs.d/blackhole-lines.svg")
 
-  (use-package dashboard
-    :config
-    (setq dashboard-startup-banner "~/.emacs.d/blackhole-lines.svg")
-    (setq dashboard-image-banner-max-height 600)
-    (setq dashboard-banner-logo-title "Ξ  M  Λ  C  S ")
-    (setq dashboard-items nil)
-    (setq dashboard-footer-messages '(""))
-    (setq dashboard-center-content t)
-    (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
-    (dashboard-setup-startup-hook))
+    (defun toa/splash-buffer () (get-buffer-create "*splash*"))
+
+    (defun toa/splash--stats ()
+    (let* ((pkgs (length package-activated-list))
+	    (secs (float-time (time-subtract after-init-time before-init-time))))
+	(format "%d packages loaded in %.2fs" pkgs secs)))
+
+    (defun toa/splash--insert-centered (win str)
+    "Insert STR centered (single line) into WIN."
+    (let* ((cols (if win (window-body-width win) (frame-width)))
+	    (pad  (max 0 (/ (- cols (string-width str)) 2))))
+	(insert (make-string pad ?\s) str "\n")))
+
+    (defun toa/splash--insert-svg (win)
+    "Insert the SVG centered in WIN, scaled to window width."
+    (when (and (image-type-available-p 'svg)
+		(file-readable-p (expand-file-name toa/splash-svg-path)))
+	(let* ((wpx  (window-body-width win t))          ; window width in pixels
+	    (cw   (frame-char-width))                 ; char cell width in px
+	    (imgw (max 32 (floor (* 0.25 wpx))))      ; use ~25% of window width
+	    (img  (create-image (expand-file-name toa/splash-svg-path)
+				'svg nil :width imgw))
+	    (img-size (image-size img t))
+	    (img-cols (max 1 (floor (/ (car img-size) (float cw)))))
+	    (cols (window-body-width win))
+	    (pad  (max 0 (/ (- cols img-cols) 2))))
+	;; leading spaces to center, then the image
+	(insert (make-string pad ?\s))
+	(insert-image img)
+	(insert "\n"))))
+
+    (defun toa/splash--render (&optional win)
+    (with-current-buffer (toa/splash-buffer)
+	(let* ((inhibit-read-only t)
+	    (win (or win (get-buffer-window (current-buffer) t))))
+	(erase-buffer)
+	(setq-local truncate-lines t
+		    cursor-type nil
+		    mode-line-format nil
+		    header-line-format nil)
+	;; SVG on top
+	(when win (toa/splash--insert-svg win))
+	;; Title + stats
+	(toa/splash--insert-centered win toa/splash-text)
+	(toa/splash--insert-centered win (toa/splash--stats))
+	(goto-char (point-min))
+	(read-only-mode 1))))
+
+    (defun toa/splash--on-resize (_frame)
+    (dolist (win (get-buffer-window-list (toa/splash-buffer) nil t))
+	(with-selected-window win (toa/splash--render win))))
+
+    (defun toa/splash-dismiss ()
+    (interactive)
+    (remove-hook 'window-size-change-functions #'toa/splash--on-resize)
+    (when (buffer-live-p (toa/splash-buffer))
+	(kill-buffer (toa/splash-buffer))))
+
+    (defun toa/splash-show ()
+    (interactive)
+    (switch-to-buffer (toa/splash-buffer))
+    (use-local-map (let ((m (make-sparse-keymap)))
+		    (define-key m (kbd "q") #'toa/splash-dismiss)
+		    m))
+    (add-hook 'window-size-change-functions #'toa/splash--on-resize)
+    (toa/splash--render (selected-window)))
+
+    ;; Use at startup
+    (setq inhibit-startup-screen t)
+    (add-hook 'emacs-startup-hook #'toa/splash-show)
+
+    ;;  (use-package dashboard
+    ;;    :config
+    ;;    (setq dashboard-startup-banner "~/.emacs.d/blackhole-lines.svg")
+    ;;    (setq dashboard-image-banner-max-height 600)
+    ;;    (setq dashboard-banner-logo-title "Ξ  M  Λ  C  S ")
+    ;;    (setq dashboard-items nil)
+    ;;    (setq dashboard-footer-messages '(""))
+    ;;    (setq dashboard-center-content t)
+    ;;    (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+    ;;    (dashboard-setup-startup-hook))
 #+end_src
 
 * Treemacs 
