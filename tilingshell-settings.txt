@@ -1,0 +1,20 @@
+[/]
+edge-tiling-offset=uint32 157
+enable-autotiling=true
+enable-blur-selected-tilepreview=false
+enable-blur-snap-assistant=false
+enable-smart-window-border-radius=false
+enable-span-multiple-tiles=false
+enable-tiling-system=false
+enable-window-border=false
+inner-gaps=uint32 8
+move-window-down=['<Super>j']
+move-window-left=['<Super>h']
+move-window-right=['<Super>l']
+move-window-up=['<Super>k']
+outer-gaps=uint32 6
+quarter-tiling-threshold=uint32 30
+selected-layouts=[['91479798']]
+snap-assistant-threshold=47
+window-border-color='rgb(129,61,156)'
+window-border-width=uint32 4
