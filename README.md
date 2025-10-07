@@ -86,39 +86,7 @@ sudo snap install spotify
 
 ---
 
-## 6. Disable Sleep While Plugged In
-
-To prevent the system from sleeping while on AC power (useful for remote jobs):
-
-```bash
-gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0
-```
-
----
-
-## 7. Configure GNOME Extensions
-
-Launch the extension manager:
-
-```bash
-gnome-shell-extension-manager
-```
-
-Then:
-- **Disable**: Desktop Icons, Ubuntu Dock, Ubuntu Tiling Assistant  
-- **Install**: Tiling Shell Extension  
-- Import your saved settings via the extension manager’s gear menu.
-
----
-
-## 8. Set Up GNOME Online Accounts
-
-Open **Settings → Online Accounts** and add your **personal Google account**.
-This enables Google Drive access and calendar integration in GNOME.
-
----
-
-## 9. Install Kitty Terminal
+## 6. Install Kitty Terminal
 
 ```bash
 curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
@@ -126,7 +94,7 @@ curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
 
 ---
 
-## 10. Install Dropbox
+## 7. Install Dropbox
 
 Follow the official instructions: <https://www.dropbox.com/install-linux>
 
@@ -139,7 +107,7 @@ After starting Dropbox, sign in and wait for the `~/Dropbox` folder to sync your
 
 ---
 
-## 11. Clone and Link Dotfiles
+## 8. Clone and Link Dotfiles
 
 Once Dropbox has finished syncing, clone your personal dotfiles repository:
 
@@ -158,18 +126,75 @@ ln -s ~/.dotfiles/kitty.conf ~/.config/kitty/
 
 ---
 
-## 12. Sync Passwords, Fonts, and Wallpaper
+## 9. GNOME Extensions (after cloning dotfiles)
+
+Launch the extension manager:
+
+```bash
+gnome-shell-extension-manager
+```
+
+Then:
+- **Disable**: Desktop Icons, Ubuntu Dock, Ubuntu Tiling Assistant  
+- **Install**: **Tiling Shell** extension  
+- **Import settings**: Use the gear/menu in Extension Manager to **Import** from:  
+  `~/.dotfiles/tilingshell-settings.txt`
+
+---
+
+## 10. GNOME Appearance & Behavior
+
+Set dark mode and wallpaper:
+
+```bash
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+gsettings set org.gnome.desktop.background picture-uri "file://$HOME/Dropbox/wallpaper/your_image.jpg"
+gsettings set org.gnome.desktop.background picture-uri-dark "file://$HOME/Dropbox/wallpaper/your_image.jpg"
+```
+
+Workspaces: fixed number (1 total):
+
+```bash
+gsettings set org.gnome.mutter dynamic-workspaces false
+gsettings set org.gnome.desktop.wm.preferences num-workspaces 1
+```
+
+Power & performance:
+
+```bash
+# Performance mode (if supported by power-profiles-daemon)
+powerprofilesctl set performance || true
+
+# Keep system awake on AC (no auto-suspend)
+gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0
+
+# Screen blank after 10 minutes (600 seconds)
+gsettings set org.gnome.desktop.session idle-delay 600
+```
+
+Reduce animations & tune key repeat:
+
+```bash
+# Reduce motion
+gsettings set org.gnome.desktop.interface enable-animations false
+
+# Key repeat: roughly mid values; adjust to taste
+gsettings set org.gnome.desktop.peripherals.keyboard delay 300       # ms
+gsettings set org.gnome.desktop.peripherals.keyboard repeat-interval 25  # ms
+```
+
+Add your Google account:
+
+- **Settings → Online Accounts → Google** and sign in (Drive/Calendar/Contacts integration).
+
+---
+
+## 11. Sync Passwords, Fonts, and Wallpaper
 
 Link password store (used by `pass` and `passforios`):
 
 ```bash
 ln -s ~/Dropbox/.password_store ~/
-```
-
-Set wallpaper:
-
-```bash
-gsettings set org.gnome.desktop.background picture-uri "file://$HOME/Dropbox/wallpaper/"
 ```
 
 Link custom fonts and refresh font cache:
@@ -180,9 +205,11 @@ ln -s ~/Dropbox/fonts ~/.local/share/fonts
 fc-cache -fv
 ```
 
+(If you haven't set a specific wallpaper file yet, choose one under `~/Dropbox/wallpaper/` and re-run the wallpaper command above.)
+
 ---
 
-## 13. Install Conda
+## 12. Install Conda
 
 Install Miniconda locally under your home directory:
 
@@ -208,7 +235,7 @@ source ~/.bashrc
 
 ---
 
-## 14. Generate SSH Keys
+## 13. Generate SSH Keys
 
 Generate a new SSH key for the current machine:
 
@@ -225,12 +252,24 @@ cat ~/.ssh/id_ed25519.pub
 ```
 
 Upload it to:
-- [GitHub SSH Keys](https://github.com/settings/keys)
-- [GitLab SSH Keys](https://gitlab.com/-/profile/keys)
+- GitHub: https://github.com/settings/keys
+- GitLab: https://gitlab.com/-/profile/keys
+
+Propagate this key to other machines you access:
+
+```bash
+ssh-copy-id <other-machine-name-or-ip>
+```
+
+Also, from other machines that need access **to this one**, run on those machines:
+
+```bash
+ssh-copy-id <this-machine-name-or-ip>
+```
 
 ---
 
-## 15. Import GPG Key
+## 14. Import GPG Key
 
 Import your private GPG key (for password store or commits):
 
@@ -254,7 +293,7 @@ save
 
 ---
 
-## 16. Set Up Printer (ETH Zurich Network Printer)
+## 15. Set Up Printer (ETH Zurich Network Printer)
 
 Install required packages:
 
@@ -269,19 +308,13 @@ system-config-printer
 ```
 
 Then:
-1. Choose **Add → Network Printer → Windows Printer via SAMBA**
-2. Enter the **device URI**:  
-   `smb://drz-moog.d.ethz.ch/drz-std4-20-hpm551`
-3. Set authentication details:  
-   - **Username:** `d\taydin`  
+1. **Add → Network Printer → Windows Printer via SAMBA**
+2. **Device URI:** `smb://drz-moog.d.ethz.ch/drz-std4-20-hpm551`
+3. **Authentication:**
+   - **Username:** `d\taydin`
    - **Password:** `eth/nethz`
-4. Use this driver:  
-   <https://wiki.drz.li/drz-std4-20-hpm551.ppd>
+4. **Driver:** <https://wiki.drz.li/drz-std4-20-hpm551.ppd>
 
-Save and print a test page to confirm setup.
+Print a test page to confirm setup.
 
 ---
-
-
-
-
