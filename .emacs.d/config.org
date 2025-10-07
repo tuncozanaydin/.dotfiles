@@ -106,6 +106,74 @@ Emacs: #+TITLE Configuration
         (or full-key key) description)))
 #+end_src
 
+* Optional space prefix key
+#+begin_src emacs-lisp :tangle config.el
+(defvar toa/space-leader-enabled nil
+  "Non-nil when Space leader is active.")
+
+;; Prefix keymap shown when pressing SPC in Evil normal/visual/motion states
+(define-prefix-command 'toa/space-leader-map)
+
+;; Mirror the classic prefix maps behind SPC:
+(define-key toa/space-leader-map (kbd "x") ctl-x-map)      ;; SPC x == C-x
+(define-key toa/space-leader-map (kbd "h") help-map)       ;; SPC h == C-h
+(with-eval-after-load 'evil
+  (define-key toa/space-leader-map (kbd "w") evil-window-map)) ;; SPC w == C-w
+
+;; Expose existing C-t leader under SPC t (so both trees are reachable)
+(define-key toa/space-leader-map (kbd "t") toa/leader-map)
+
+;; Toggle bindings
+(defun toa/space-leader-enable ()
+  "Enable Space leader key (SPC) in Evil normal/visual/motion states."
+  (interactive)
+  (setq toa/space-leader-enabled t)
+  (with-eval-after-load 'evil
+    (dolist (map '(evil-normal-state-map evil-visual-state-map evil-motion-state-map))
+      (define-key (symbol-value map) (kbd "SPC") 'toa/space-leader-map)))
+  ;; while enabled, allow SPC t C-l to disable quickly
+  (define-key toa/space-leader-map (kbd "t C-l") #'toa/space-leader-disable))
+
+(defun toa/space-leader-disable ()
+  "Disable Space leader key (restore SPC to its previous meanings)."
+  (interactive)
+  (setq toa/space-leader-enabled nil)
+  (with-eval-after-load 'evil
+    (dolist (map '(evil-normal-state-map evil-visual-state-map evil-motion-state-map))
+      (define-key (symbol-value map) (kbd "SPC") nil))))
+
+(defun toa/space-leader-toggle ()
+  "Toggle Space leader on/off."
+  (interactive)
+  (if toa/space-leader-enabled
+      (toa/space-leader-disable)
+    (toa/space-leader-enable)))
+
+;; Global hot-swap: C-t C-l turns Space-leader on/off
+(global-set-key (kbd "C-t C-l") #'toa/space-leader-toggle)
+;; When enabled, SPC t C-l (within the SPC prefix) turns it off
+;; (bound in `toa/space-leader-enable` above)
+
+;; Optional: nice which-key labels (if you use which-key)
+(with-eval-after-load 'which-key
+  (which-key-add-key-based-replacements
+    "SPC"        "space-leader"
+    "SPC x"      "C-x (global)"
+    "SPC h"      "help (C-h)"
+    "SPC w"      "windows (C-w)"
+    "SPC t"      "C-t leader"
+    "SPC t C-l"  "disable space-leader"
+    "C-t C-l"    "toggle space-leader"))
+
+;;; --- Choose default --------------------------------------------------------
+;; Keep both available but Space-leader OFF by default:
+;; (do nothing)
+
+;; If you prefer Space-leader ON by default, uncomment:
+;; (add-hook 'after-init-hook #'toa/space-leader-enable)
+
+#+end_src
+
 * Frame resizing via keyboard
 #+begin_src emacs-lisp :tangle config.el
   (defvar toa/original-frame-config nil
