@@ -107,7 +107,6 @@ cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
 ~/.dropbox-dist/dropboxd
 ```
 
-After starting Dropbox, sign in and wait for the `~/Dropbox` folder to sync your `.dotfiles` directory.
 
 ---
 
