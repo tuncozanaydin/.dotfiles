@@ -203,8 +203,8 @@ ln -s ~/Dropbox/.password_store ~/
 Link custom fonts and refresh font cache:
 
 ```bash
-mkdir -p ~/.local/share/fonts
-ln -s ~/Dropbox/fonts ~/.local/share/fonts
+cd ~/.local/share
+ln -s ~/Dropbox/fonts .
 fc-cache -fv
 ```
 
