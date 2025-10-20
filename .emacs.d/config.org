@@ -425,15 +425,15 @@ Emacs: #+TITLE Configuration
     "Set MonoLisa font size based on OS and WSL detection."
     (cond
      ((toa/wsl-p)
-      (set-face-attribute 'default nil :family "MonoLisa toa" :height 140))
+      (set-face-attribute 'default nil :family "MonoLisa toa" :height 120))
      ((eq system-type 'windows-nt)
       (set-face-attribute 'default nil :family "MonoLisa toa" :height 120))
      ((eq system-type 'darwin)
-      (set-face-attribute 'default nil :family "MonoLisa toa" :height 140))
+      (set-face-attribute 'default nil :family "MonoLisa toa" :height 120))
      ((eq system-type 'gnu/linux)
       (set-face-attribute 'default nil :family "MonoLisa toa" :height 120))
      (t
-      (set-face-attribute 'default nil :family "MonoLisa toa" :height 140))))
+      (set-face-attribute 'default nil :family "MonoLisa toa" :height 120))))
 
   ;; Only apply in GUI mode
   (when (display-graphic-p)
