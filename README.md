@@ -82,10 +82,6 @@ sudo systemctl start ssh
 sudo snap install emacs --classic
 sudo snap install brave
 sudo snap install spotify
-sudo snap install chatgpt-linux
-sudo snap install teams-for-linux
-sudo snap install google-apps-desktop
-sudo snap install whatsapp-linux-desktop
 ```
 
 ---
@@ -107,7 +103,6 @@ cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
 ~/.dropbox-dist/dropboxd
 ```
 
-After starting Dropbox, sign in and wait for the `~/Dropbox` folder to sync your `.dotfiles` directory.
 
 ---
 
@@ -204,8 +199,8 @@ ln -s ~/Dropbox/.password_store ~/
 Link custom fonts and refresh font cache:
 
 ```bash
-mkdir -p ~/.local/share/fonts
-ln -s ~/Dropbox/fonts ~/.local/share/fonts
+cd ~/.local/share
+ln -s ~/Dropbox/fonts .
 fc-cache -fv
 ```
 
