@@ -345,6 +345,79 @@ Emacs: #+TITLE Configuration
     				   "toggle override" "C-t r o")
 #+end_src
 
+* Python virtualenvs (pyvenv)
+#+begin_src emacs-lisp :tangle config.el
+     (use-package pyvenv
+       :ensure t
+       :config
+       ;; If you keep your venvs in a central place, uncomment and adjust:
+       ;; (setenv "WORKON_HOME" (expand-file-name "~/.virtualenvs"))
+
+       ;; Optional: automatically make `python-shell` etc. follow the active venv
+       ;; (pyvenv-tracking-mode 1)
+       )
+
+     ;; Simple leader bindings for manual control:
+     (define-prefix-command 'toa/leader-venv-map)
+     (toa/define-key-with-description toa/leader-map "v" 'toa/leader-venv-map "venv" "C-t v")
+
+    (defun toa/pyvenv-activate-and-eglot-reconnect (dir)
+	"Activate virtualenv at DIR and reconnect Eglot in the current Python buffer."
+	(interactive
+	(list (read-directory-name "Virtualenv directory: " nil nil t)))
+	(pyvenv-activate dir)
+	;; If Eglot is managing this buffer, reconnect using the current server.
+	(when (eglot-managed-p)
+	(when-let ((server (eglot-current-server)))
+	    (ignore-errors (eglot-reconnect server))))
+	(message "Activated venv: %s and reconnected Eglot (if active)." dir))
+      ;;(defun toa/pyvenv-activate-and-eglot-reconnect (dir)
+      ;;"Activate virtualenv at DIR and reconnect Eglot in all Python buffers."
+      ;;(interactive
+      ;;(list (read-directory-name "Virtualenv directory: " nil nil t)))
+      ;;(pyvenv-activate dir)
+      ;;;; After venv activation, reconnect eglot everywhere it’s managing Python
+      ;;(dolist (buf (buffer-list))
+      ;;	  (with-current-buffer buf
+      ;;	  (when (and (derived-mode-p 'python-mode)
+      ;;		  	    (eglot-managed-p))
+      ;;	      (ignore-errors (eglot-reconnect)))))
+      ;;(eglot-reconnect (eglot-current-server))
+      ;;(message "Activated venv: %s and reconnected Eglot." dir))
+
+      ;; C-t v a → activate venv + reconnect eglot
+      (toa/define-key-with-description toa/leader-venv-map "a"
+    				    #'toa/pyvenv-activate-and-eglot-reconnect
+    				    "activate venv + eglot" "C-t v a")
+     ;; C-t v a → pyvenv-activate (choose any venv by path)
+     ;;(toa/define-key-with-description toa/leader-venv-map "a"
+     ;;                                 #'pyvenv-activate
+     ;;                                 "activate venv (path)" "C-t v a")
+
+     ;; C-t v d → pyvenv-deactivate
+     (toa/define-key-with-description toa/leader-venv-map "d"
+                                      #'pyvenv-deactivate
+                                      "deactivate venv" "C-t v d")
+
+     ;; (Optional) if you use WORKON_HOME + named envs:
+     ;; C-t v w → pyvenv-workon
+     ;;(toa/define-key-with-description toa/leader-venv-map "w"
+     ;;                                 #'pyvenv-workon
+     ;;                                 "workon named env" "C-t v w")
+    ;;(defun toa/eglot-restart-python ()
+    ;;   "Restart Eglot for all Python buffers after venv activation."
+    ;;   (dolist (buf (buffer-list))
+    ;;     (with-current-buffer buf
+    ;;       (when (and (derived-mode-p 'python-mode)
+    ;;                  (eglot-managed-p))
+    ;;         (ignore-errors (eglot-reconnect))))))
+
+    ;; (with-eval-after-load 'pyvenv
+    ;;   (add-hook 'pyvenv-post-activate-hooks   #'toa/eglot-restart-python)
+    ;;   (add-hook 'pyvenv-post-deactivate-hooks #'toa/eglot-restart-python)) 
+
+#+end_src
+
 * Eglot
 #+begin_src emacs-lisp :tangle config.el
   (use-package eglot
@@ -354,8 +427,15 @@ Emacs: #+TITLE Configuration
   (defun toa/setup-completion ()
     (setq-local completion-at-point-functions
     	      (list #'eglot-completion-at-point)))
+  
+  ;; Use global pyright (npm) as the LSP server
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs
+               '((python-mode python-ts-mode)
+                 . ("pyright-langserver" "--stdio"))))
 
   (add-hook 'eglot-managed-mode-hook 'toa/setup-completion) 
+
   (defun toa/ensure-pyright-installed ()
     "Ensure pyright is installed. Offer to install pyright or node via conda."
     (unless (executable-find "pyright")
@@ -377,7 +457,7 @@ Emacs: #+TITLE Configuration
                 (shell-command "npm install -g pyright")
                 (message "Pyright installed via npm."))))))))
 
-  (add-hook 'python-mode-hook #'toa/ensure-pyright-installed)
+  ;;(add-hook 'python-mode-hook #'toa/ensure-pyright-installed)
 #+end_src
 
 * Conda
@@ -402,7 +482,7 @@ Emacs: #+TITLE Configuration
           (conda-env-activate env))))
 
     ;; Hook it into python-mode
-    (add-hook 'python-mode-hook #'toa/select-conda-env)
+    ;;(add-hook 'python-mode-hook #'toa/select-conda-env)
 #+end_src
 
 * Smooth Scrolling
@@ -551,133 +631,155 @@ Emacs: #+TITLE Configuration
 
 * Emacs GUI
 #+begin_src emacs-lisp :tangle config.el
-          (menu-bar-mode -1)
-          (tool-bar-mode -1)
-          (tooltip-mode -1)
-          (scroll-bar-mode -1)
-          (column-number-mode)
-          (size-indication-mode)
-          (set-fringe-mode 10)
+        (menu-bar-mode -1)
+        (tool-bar-mode -1)
+        (tooltip-mode -1)
+        (scroll-bar-mode -1)
+        (column-number-mode)
+        (size-indication-mode)
+        (set-fringe-mode 10)
 
-          (setq visible-bell t)
+        (setq visible-bell t)
 
-          (use-package all-the-icons
-            :ensure t)
+        (use-package all-the-icons
+          :ensure t)
 
-          (use-package doom-modeline
-            :ensure t
-            :config
+        (use-package doom-modeline
+          :ensure t
+          :config
 
-            (doom-modeline-mode t) 
-            ;; Custom segment to show the Conda environment
-            (doom-modeline-def-segment conda-env
-              "Display the current Conda environment in the modeline."
-              (when (and (boundp 'conda-env-current-name) conda-env-current-name)
-                (format " [%s]" conda-env-current-name)))
+        (doom-modeline-mode t) 
+  	;; Define a modeline segment that shows the pyvenv name
+  	(doom-modeline-def-segment pyvenv
+  	    "Display the active pyvenv virtual environment."
+  	    (when (and (boundp 'pyvenv-virtual-env-name)
+  		    pyvenv-virtual-env-name
+  		    (not (string-empty-p pyvenv-virtual-env-name)))
+  	    (format " [%s]" pyvenv-virtual-env-name)))
 
-            ;; Add the Conda environment segment to an existing modeline layout
-            (doom-modeline-def-modeline 'toa/python-line
-              '(bar workspace-name window-number modals matches buffer-info remote-host buffer-position parrot selection-info)
-              '(objed-state misc-info persp-name conda-env lsp minor-modes major-mode process vcs)) ;; checker))
+  	;; Add the segment to your existing modeline(s)
+  	;; You can add it anywhere you like. Here's how to append it:
+  	(doom-modeline-def-modeline 'toa/python-line
+  	    '(bar workspace-name window-number modals matches buffer-info remote-host buffer-position parrot selection-info)
+  	    '(objed-state misc-info persp-name pyvenv lsp minor-modes major-mode process vcs))
 
-            ;; Apply the custom modeline only in Python mode
-            (add-hook 'python-mode-hook
-                      (lambda () (doom-modeline-set-modeline 'toa/python-line t))))
+  	;; Activate the python modeline for Python mode
+  	(add-hook 'python-mode-hook
+            (lambda ()
+              (doom-modeline-set-modeline 'toa/python-line t))))
+  
+	;; Refresh modeline when venv changes
+	(add-hook 'pyvenv-post-activate-hooks #'force-mode-line-update)
+	(add-hook 'pyvenv-post-deactivate-hooks #'force-mode-line-update)
+          ;; Custom segment to show the Conda environment
+          ;; (doom-modeline-def-segment conda-env
+          ;;  "Display the current Conda environment in the modeline."
+          ;;  (when (and (boundp 'conda-env-current-name) conda-env-current-name)
+          ;;    (format " [%s]" conda-env-current-name)))
 
-          ;; Refresh Doom Modeline when Conda environment changes
-          (defun toa/update-conda-env-modeline ()
-            "Update Doom Modeline when Conda environment changes."
-            (doom-modeline-set-modeline 'toa/python-line t)
-            (force-mode-line-update t))
+          ;;;; Add the Conda environment segment to an existing modeline layout
+          ;;(doom-modeline-def-modeline 'toa/python-line
+          ;;  '(bar workspace-name window-number modals matches buffer-info remote-host buffer-position parrot selection-info)
+          ;;  '(objed-state misc-info persp-name conda-env lsp minor-modes major-mode process vcs)) ;; checker))
 
-          (add-hook 'conda-postactivate-hook #'toa/update-conda-env-modeline)
-          (add-hook 'conda-postdeactivate-hook #'toa/update-conda-env-modeline)
-        
-    ;; --- Splash with SVG on top -------------------------------------------------
-    (defvar toa/splash-text "Ξ  M  Λ  C  S")
-    (defvar toa/splash-svg-path "~/.emacs.d/blackhole-lines.svg")
+          ;;;; Apply the custom modeline only in Python mode
+          ;;(add-hook 'python-mode-hook
+          ;;          (lambda () (doom-modeline-set-modeline 'toa/python-line t))))
 
-    (defun toa/splash-buffer () (get-buffer-create "*splash*"))
+        ;;;; Refresh Doom Modeline when Conda environment changes
+        ;;(defun toa/update-conda-env-modeline ()
+        ;;  "Update Doom Modeline when Conda environment changes."
+        ;;  (doom-modeline-set-modeline 'toa/python-line t)
+        ;;  (force-mode-line-update t))
 
-    (defun toa/splash--stats ()
-    (let* ((pkgs (length package-activated-list))
-	    (secs (float-time (time-subtract after-init-time before-init-time))))
-	(format "%d packages loaded in %.2fs" pkgs secs)))
+        ;;(add-hook 'conda-postactivate-hook #'toa/update-conda-env-modeline)
+        ;;(add-hook 'conda-postdeactivate-hook #'toa/update-conda-env-modeline)
+      
+  ;; --- Splash with SVG on top -------------------------------------------------
+  (defvar toa/splash-text "Ξ  M  Λ  C  S")
+  (defvar toa/splash-svg-path "~/.emacs.d/blackhole-lines.svg")
 
-    (defun toa/splash--insert-centered (win str)
-    "Insert STR centered (single line) into WIN."
-    (let* ((cols (if win (window-body-width win) (frame-width)))
-	    (pad  (max 0 (/ (- cols (string-width str)) 2))))
-	(insert (make-string pad ?\s) str "\n")))
+  (defun toa/splash-buffer () (get-buffer-create "*splash*"))
 
-    (defun toa/splash--insert-svg (win)
-    "Insert the SVG centered in WIN, scaled to window width."
-    (when (and (image-type-available-p 'svg)
-		(file-readable-p (expand-file-name toa/splash-svg-path)))
-	(let* ((wpx  (window-body-width win t))          ; window width in pixels
-	    (cw   (frame-char-width))                 ; char cell width in px
-	    (imgw (max 32 (floor (* 0.25 wpx))))      ; use ~25% of window width
-	    (img  (create-image (expand-file-name toa/splash-svg-path)
-				'svg nil :width imgw))
-	    (img-size (image-size img t))
-	    (img-cols (max 1 (floor (/ (car img-size) (float cw)))))
-	    (cols (window-body-width win))
-	    (pad  (max 0 (/ (- cols img-cols) 2))))
-	;; leading spaces to center, then the image
-	(insert (make-string pad ?\s))
-	(insert-image img)
-	(insert "\n"))))
+  (defun toa/splash--stats ()
+  (let* ((pkgs (length package-activated-list))
+  	    (secs (float-time (time-subtract after-init-time before-init-time))))
+  	(format "%d packages loaded in %.2fs" pkgs secs)))
 
-    (defun toa/splash--render (&optional win)
-    (with-current-buffer (toa/splash-buffer)
-	(let* ((inhibit-read-only t)
-	    (win (or win (get-buffer-window (current-buffer) t))))
-	(erase-buffer)
-	(setq-local truncate-lines t
-		    cursor-type nil
-		    mode-line-format nil
-		    header-line-format nil)
-	;; SVG on top
-	(when win (toa/splash--insert-svg win))
-	;; Title + stats
-	(toa/splash--insert-centered win toa/splash-text)
-	(toa/splash--insert-centered win (toa/splash--stats))
-	(goto-char (point-min))
-	(read-only-mode 1))))
+  (defun toa/splash--insert-centered (win str)
+  "Insert STR centered (single line) into WIN."
+  (let* ((cols (if win (window-body-width win) (frame-width)))
+  	    (pad  (max 0 (/ (- cols (string-width str)) 2))))
+  	(insert (make-string pad ?\s) str "\n")))
 
-    (defun toa/splash--on-resize (_frame)
-    (dolist (win (get-buffer-window-list (toa/splash-buffer) nil t))
-	(with-selected-window win (toa/splash--render win))))
+  (defun toa/splash--insert-svg (win)
+  "Insert the SVG centered in WIN, scaled to window width."
+  (when (and (image-type-available-p 'svg)
+  		(file-readable-p (expand-file-name toa/splash-svg-path)))
+  	(let* ((wpx  (window-body-width win t))          ; window width in pixels
+  	    (cw   (frame-char-width))                 ; char cell width in px
+  	    (imgw (max 32 (floor (* 0.25 wpx))))      ; use ~25% of window width
+  	    (img  (create-image (expand-file-name toa/splash-svg-path)
+  				'svg nil :width imgw))
+  	    (img-size (image-size img t))
+  	    (img-cols (max 1 (floor (/ (car img-size) (float cw)))))
+  	    (cols (window-body-width win))
+  	    (pad  (max 0 (/ (- cols img-cols) 2))))
+  	;; leading spaces to center, then the image
+  	(insert (make-string pad ?\s))
+  	(insert-image img)
+  	(insert "\n"))))
 
-    (defun toa/splash-dismiss ()
-    (interactive)
-    (remove-hook 'window-size-change-functions #'toa/splash--on-resize)
-    (when (buffer-live-p (toa/splash-buffer))
-	(kill-buffer (toa/splash-buffer))))
+  (defun toa/splash--render (&optional win)
+  (with-current-buffer (toa/splash-buffer)
+  	(let* ((inhibit-read-only t)
+  	    (win (or win (get-buffer-window (current-buffer) t))))
+  	(erase-buffer)
+  	(setq-local truncate-lines t
+  		    cursor-type nil
+  		    mode-line-format nil
+  		    header-line-format nil)
+  	;; SVG on top
+  	(when win (toa/splash--insert-svg win))
+  	;; Title + stats
+  	(toa/splash--insert-centered win toa/splash-text)
+  	(toa/splash--insert-centered win (toa/splash--stats))
+  	(goto-char (point-min))
+  	(read-only-mode 1))))
 
-    (defun toa/splash-show ()
-    (interactive)
-    (switch-to-buffer (toa/splash-buffer))
-    (use-local-map (let ((m (make-sparse-keymap)))
-		    (define-key m (kbd "q") #'toa/splash-dismiss)
-		    m))
-    (add-hook 'window-size-change-functions #'toa/splash--on-resize)
-    (toa/splash--render (selected-window)))
+  (defun toa/splash--on-resize (_frame)
+  (dolist (win (get-buffer-window-list (toa/splash-buffer) nil t))
+  	(with-selected-window win (toa/splash--render win))))
 
-    ;; Use at startup
-    (setq inhibit-startup-screen t)
-    (add-hook 'emacs-startup-hook #'toa/splash-show)
+  (defun toa/splash-dismiss ()
+  (interactive)
+  (remove-hook 'window-size-change-functions #'toa/splash--on-resize)
+  (when (buffer-live-p (toa/splash-buffer))
+  	(kill-buffer (toa/splash-buffer))))
 
-    ;;  (use-package dashboard
-    ;;    :config
-    ;;    (setq dashboard-startup-banner "~/.emacs.d/blackhole-lines.svg")
-    ;;    (setq dashboard-image-banner-max-height 600)
-    ;;    (setq dashboard-banner-logo-title "Ξ  M  Λ  C  S ")
-    ;;    (setq dashboard-items nil)
-    ;;    (setq dashboard-footer-messages '(""))
-    ;;    (setq dashboard-center-content t)
-    ;;    (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
-    ;;    (dashboard-setup-startup-hook))
+  (defun toa/splash-show ()
+  (interactive)
+  (switch-to-buffer (toa/splash-buffer))
+  (use-local-map (let ((m (make-sparse-keymap)))
+  		    (define-key m (kbd "q") #'toa/splash-dismiss)
+  		    m))
+  (add-hook 'window-size-change-functions #'toa/splash--on-resize)
+  (toa/splash--render (selected-window)))
+
+  ;; Use at startup
+  (setq inhibit-startup-screen t)
+  (add-hook 'emacs-startup-hook #'toa/splash-show)
+
+  ;;  (use-package dashboard
+  ;;    :config
+  ;;    (setq dashboard-startup-banner "~/.emacs.d/blackhole-lines.svg")
+  ;;    (setq dashboard-image-banner-max-height 600)
+  ;;    (setq dashboard-banner-logo-title "Ξ  M  Λ  C  S ")
+  ;;    (setq dashboard-items nil)
+  ;;    (setq dashboard-footer-messages '(""))
+  ;;    (setq dashboard-center-content t)
+  ;;    (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+  ;;    (dashboard-setup-startup-hook))
 #+end_src
 
 * Treemacs 
