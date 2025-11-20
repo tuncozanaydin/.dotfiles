@@ -64,7 +64,8 @@ Save and exit (`Ctrl+O`, `Enter`, `Ctrl+X` in nano).
 
 ```bash
 sudo apt update
-sudo apt install -y git wget mplayer openssh-server gnome-shell-extension-manager nvtop htop pass curl kitty
+sudo apt install -y git wget mplayer openssh-server gnome-shell-extension-manager nvtop htop pass curl kitty nodejs npm sshfs
+npm install pyright
 ```
 
 Enable SSH for remote access:
