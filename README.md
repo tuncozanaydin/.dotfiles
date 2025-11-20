@@ -64,7 +64,7 @@ Save and exit (`Ctrl+O`, `Enter`, `Ctrl+X` in nano).
 
 ```bash
 sudo apt update
-sudo apt install -y git wget mplayer openssh-server gnome-shell-extension-manager nvtop htop pass
+sudo apt install -y git wget mplayer openssh-server gnome-shell-extension-manager nvtop htop pass curl kitty
 ```
 
 Enable SSH for remote access:
@@ -80,21 +80,13 @@ sudo systemctl start ssh
 
 ```bash
 sudo snap install emacs --classic
-sudo snap install brave
-sudo snap install spotify
+sudo snap install brave spotify
 ```
 
 ---
 
-## 6. Install Kitty Terminal
 
-```bash
-curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
-```
-
----
-
-## 7. Install Dropbox
+## 6. Install Dropbox
 
 Follow the official instructions: <https://www.dropbox.com/install-linux>
 
@@ -103,12 +95,69 @@ cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
 ~/.dropbox-dist/dropboxd
 ```
 
+---
+
+## 7. Import GPG Key
+
+Import your private GPG key (for password store or commits):
+
+```bash
+gpg --allow-secret-key-import --import private.key
+```
+
+Verify:
+
+```bash
+gpg --list-keys
+```
+
+Edit and trust key:
+
+```bash
+gpg --edit-key [KEYID]
+trust
+save
+```
 
 ---
 
-## 8. Clone and Link Dotfiles
+## 8. Generate SSH Keys
 
-Once Dropbox has finished syncing, clone your personal dotfiles repository:
+Generate a new SSH key for the current machine:
+
+```bash
+ssh-keygen -t ed25519 -C "tunc@<machine-name>"
+```
+
+The key will be saved to `~/.ssh/id_ed25519` by default.
+
+Display the public key:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+Upload it to:
+- GitHub: https://github.com/settings/keys
+- GitLab: https://gitlab.com/-/profile/keys
+
+Propagate this key to other machines you access:
+
+```bash
+ssh-copy-id <other-machine-name-or-ip>
+```
+
+Also, from other machines that need access **to this one**, run on those machines:
+
+```bash
+ssh-copy-id <this-machine-name-or-ip>
+```
+
+---
+
+## 9. Clone and Link Dotfiles
+
+Once Dropbox has finished syncing, log in to github and clone your personal dotfiles repository:
 
 ```bash
 cd ~
@@ -125,7 +174,23 @@ ln -s ~/.dotfiles/kitty.conf ~/.config/kitty/
 
 ---
 
-## 9. GNOME Extensions (after cloning dotfiles)
+## 10. Fonts, and Wallpaper
+
+
+Link custom fonts and refresh font cache:
+
+```bash
+cd ~/.local/share
+ln -s ~/Dropbox/fonts .
+fc-cache -fv
+```
+
+(If you haven't set a specific wallpaper file yet, choose one under `~/Dropbox/wallpaper/` and re-run the wallpaper command above.)
+
+---
+
+
+## 11. GNOME Extensions (after cloning dotfiles)
 
 Launch the extension manager:
 
@@ -135,13 +200,14 @@ gnome-shell-extension-manager
 
 Then:
 - **Disable**: Desktop Icons, Ubuntu Dock, Ubuntu Tiling Assistant  
-- **Install**: **Tiling Shell** extension  
-- **Import settings**: Use the gear/menu in Extension Manager to **Import** from:  
-  `~/.dotfiles/tilingshell-settings.txt`
-
+- **Install**: **PaperWM** extension  
+- **Import settings**:
+```bash
+cp ~/.dotfiles/user.css ~/.config/paperwm/
+```
 ---
 
-## 10. GNOME Appearance & Behavior
+## 12. GNOME Appearance & Behavior
 
 Set dark mode and wallpaper:
 
@@ -188,27 +254,9 @@ Add your Google account:
 
 ---
 
-## 11. Sync Passwords, Fonts, and Wallpaper
 
-Link password store (used by `pass` and `passforios`):
 
-```bash
-ln -s ~/Dropbox/.password_store ~/
-```
-
-Link custom fonts and refresh font cache:
-
-```bash
-cd ~/.local/share
-ln -s ~/Dropbox/fonts .
-fc-cache -fv
-```
-
-(If you haven't set a specific wallpaper file yet, choose one under `~/Dropbox/wallpaper/` and re-run the wallpaper command above.)
-
----
-
-## 12. Install Conda
+## 13. Install Conda
 
 Install Miniconda locally under your home directory:
 
@@ -234,65 +282,8 @@ source ~/.bashrc
 
 ---
 
-## 13. Generate SSH Keys
 
-Generate a new SSH key for the current machine:
-
-```bash
-ssh-keygen -t ed25519 -C "tunc@<machine-name>"
-```
-
-The key will be saved to `~/.ssh/id_ed25519` by default.
-
-Display the public key:
-
-```bash
-cat ~/.ssh/id_ed25519.pub
-```
-
-Upload it to:
-- GitHub: https://github.com/settings/keys
-- GitLab: https://gitlab.com/-/profile/keys
-
-Propagate this key to other machines you access:
-
-```bash
-ssh-copy-id <other-machine-name-or-ip>
-```
-
-Also, from other machines that need access **to this one**, run on those machines:
-
-```bash
-ssh-copy-id <this-machine-name-or-ip>
-```
-
----
-
-## 14. Import GPG Key
-
-Import your private GPG key (for password store or commits):
-
-```bash
-gpg --allow-secret-key-import --import private.key
-```
-
-Verify:
-
-```bash
-gpg --list-keys
-```
-
-Edit and trust key:
-
-```bash
-gpg --edit-key [KEYID]
-trust
-save
-```
-
----
-
-## 15. Set Up Printer (ETH Zurich Network Printer)
+## 14. Set Up Printer (ETH Zurich Network Printer)
 
 Install required packages:
 
