@@ -81,6 +81,8 @@ sudo systemctl start ssh
 
 ```bash
 sudo snap install emacs --classic
+```
+```bash
 sudo snap install brave spotify
 ```
 
@@ -163,6 +165,11 @@ Once Dropbox has finished syncing, log in to github and clone your personal dotf
 ```bash
 cd ~
 git clone git@github.com:tuncozanaydin/.dotfiles.git
+```
+
+Lauch emacs and do:
+```bash
+M-x nerd-icons-install-fonts
 ```
 
 Create symlinks:
