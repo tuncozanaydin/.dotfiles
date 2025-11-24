@@ -218,11 +218,16 @@ gsettings set org.gnome.desktop.background picture-uri "file://$HOME/Dropbox/wal
 gsettings set org.gnome.desktop.background picture-uri-dark "file://$HOME/Dropbox/wallpaper/your_image.jpg"
 ```
 
-Workspaces: fixed number (1 total):
+Workspaces: fixed number (4 total):
 
 ```bash
 gsettings set org.gnome.mutter dynamic-workspaces false
-gsettings set org.gnome.desktop.wm.preferences num-workspaces 1
+gsettings set org.gnome.desktop.wm.preferences num-workspaces 4
+```
+
+Save session:
+```bash
+set org.gnome.SessionManager auto-save-session true
 ```
 
 Power & performance:
